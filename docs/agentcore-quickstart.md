@@ -106,6 +106,8 @@ The agent calls:
 }
 ```
 
+The AWS adapter forwards `input.instruction` as both the AgentDispatch envelope and a top-level `prompt` alias. That means an existing AgentCore app using a starter-toolkit-style entrypoint such as `payload.get("prompt")` can run without adopting the AgentDispatch worker contract immediately.
+
 Expected immediate response:
 
 ```json
