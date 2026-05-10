@@ -21,6 +21,18 @@ An adapter must:
 
 The SDK and MCP server must not import provider-specific types.
 
+## Framework Adapters Are Separate
+
+Do not model Strands, LangChain, LangGraph, CrewAI, or OpenAI Agents as cloud backend adapters. Those are worker-side agent framework adapters. A cloud adapter provisions and invokes an execution target; the worker selects the agent framework from payload/config and returns normalized events, results, and artifacts.
+
+This separation keeps the routing key stable:
+
+```text
+provider + capability + task_type + target.mode
+```
+
+and lets the same AWS AgentCore runtime image support multiple deep-agent frameworks without adding provider-specific MCP tools.
+
 ## Capability Examples
 
 AWS:
