@@ -83,6 +83,25 @@ Configure your MCP client to launch that command over stdio.
 
 ## Dispatch A Long-Running Task
 
+For a direct CLI smoke test, define only the task. Routing falls back to `defaults` in `agentdispatch.config.json`:
+
+```bash
+agentdispatch run \
+  --config agentdispatch.config.json \
+  --instruction "Run a long-running investigation and return a concise result." \
+  --context-json '{"repo":"github.com/agent-dispatch/core"}' \
+  --wait
+```
+
+For deterministic shell execution in the same AgentCore session:
+
+```bash
+agentdispatch run \
+  --config agentdispatch.config.json \
+  --command 'echo agentdispatch-smoke' \
+  --wait
+```
+
 The agent calls:
 
 ```json
@@ -137,6 +156,15 @@ The agent can then call:
 
 Use runtime mode when the task requires a fresh deployed worker image:
 
+```bash
+agentdispatch run \
+  --config agentdispatch.config.json \
+  --target-mode runtime \
+  --target-details-json '{"ecrImageUri":"123456789012.dkr.ecr.us-west-2.amazonaws.com/agentdispatch-worker:latest","executionRoleArn":"arn:aws:iam::123456789012:role/AgentDispatchAgentCoreExecutionRole"}' \
+  --instruction "Run in a fresh AgentCore runtime." \
+  --wait
+```
+
 ```json
 {
   "provider": "aws",
@@ -157,3 +185,11 @@ Use runtime mode when the task requires a fresh deployed worker image:
 ```
 
 AgentDispatch creates runtime resources, runs the task, persists task state/logs/results/artifacts outside AgentCore, and deletes runtime resources by default.
+
+## AgentCore Runtime Compatibility Notes
+
+AgentCore Runtime HTTP containers are expected to listen on port `8080`, expose `POST /invocations` for invocation payloads, and expose `GET /ping` for health. The reference `@agentdispatch/worker-agentcore` image follows this shape and returns `{"status":"Healthy"}` from `/ping`.
+
+AgentCore command execution streams `contentStart`, `contentDelta`, and `contentStop` chunks. AgentDispatch maps these to provider-neutral progress/log events and a command exit result.
+
+Runtime sessions are isolated microVM-backed execution contexts. Reusing a `runtimeSessionId` lets `InvokeAgentRuntime` and `InvokeAgentRuntimeCommand` operate in the same session; AgentDispatch creates one session ID per task for isolation and cancellation.

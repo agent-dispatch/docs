@@ -159,6 +159,15 @@ Immediate response:
 
 The agent then polls `get_task_status`, streams logs with `get_task_logs`, retrieves final output with `get_task_result`, or cancels with `cancel_task`.
 
+The equivalent CLI call uses config defaults, so users only define the task:
+
+```bash
+agentdispatch run \
+  --instruction "Run a long-running investigation and return a concise result." \
+  --context-json '{"source":"cli"}' \
+  --wait
+```
+
 ## Future Providers
 
 Future packages such as `@agentdispatch/adapter-gcp-cloud-run`, `@agentdispatch/adapter-azure-container-apps`, or `@agentdispatch/adapter-kubernetes` should only add adapters and config profiles. They must fit the same MCP contract by declaring provider, capability, task type, and target mode support through `@agentdispatch/core`.
