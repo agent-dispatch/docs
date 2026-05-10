@@ -30,6 +30,28 @@ Runtime mode additionally requires:
 - An AgentCore execution role ARN.
 - AgentCore control-plane permissions to create endpoint/runtime resources and delete them after completion.
 
+## Build The Reference Worker Image
+
+Clone and build the AgentDispatch AgentCore worker:
+
+```bash
+git clone https://github.com/agent-dispatch/worker-agentcore
+cd worker-agentcore
+
+AWS_REGION=us-west-2 \
+ECR_REPOSITORY=agentdispatch-worker-agentcore \
+IMAGE_TAG=latest \
+npm run image:push:ecr
+```
+
+The command prints an ECR image URI like:
+
+```text
+123456789012.dkr.ecr.us-west-2.amazonaws.com/agentdispatch-worker-agentcore:latest
+```
+
+Use that URI as `target.details.ecrImageUri` when testing runtime mode.
+
 ## Configure AgentDispatch
 
 Create `agentdispatch.config.json`:
@@ -157,10 +179,13 @@ The agent can then call:
 Use runtime mode when the task requires a fresh deployed worker image:
 
 ```bash
+IMAGE_URI="123456789012.dkr.ecr.us-west-2.amazonaws.com/agentdispatch-worker-agentcore:latest"
+EXECUTION_ROLE_ARN="arn:aws:iam::123456789012:role/AgentDispatchAgentCoreExecutionRole"
+
 agentdispatch run \
   --config agentdispatch.config.json \
   --target-mode runtime \
-  --target-details-json '{"ecrImageUri":"123456789012.dkr.ecr.us-west-2.amazonaws.com/agentdispatch-worker:latest","executionRoleArn":"arn:aws:iam::123456789012:role/AgentDispatchAgentCoreExecutionRole"}' \
+  --target-details-json "{\"ecrImageUri\":\"$IMAGE_URI\",\"executionRoleArn\":\"$EXECUTION_ROLE_ARN\"}" \
   --instruction "Run in a fresh AgentCore runtime." \
   --wait
 ```

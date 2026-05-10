@@ -28,6 +28,14 @@ For custom in-process runtimes, install the store and adapter packages explicitl
 npm install @agentdispatch/core @agentdispatch/sdk @agentdispatch/store-sqlite @agentdispatch/adapter-aws-agentcore
 ```
 
+For building the reference AgentCore worker image:
+
+```bash
+git clone https://github.com/agent-dispatch/worker-agentcore
+cd worker-agentcore
+npm run image:push:ecr
+```
+
 ## Release Order
 
 Publish packages in dependency order:
