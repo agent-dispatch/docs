@@ -119,6 +119,7 @@ The MCP tool surface remains stable as providers grow:
 - `list_providers`
 - `list_capabilities`
 - `list_account_profiles`
+- `spawn_cloud_agent`
 - `dispatch_task`
 - `get_task_status`
 - `get_task_logs`
@@ -127,7 +128,24 @@ The MCP tool surface remains stable as providers grow:
 
 ## Minimal Dispatch
 
-An agent dispatches a long-running AgentCore task through the provider-neutral MCP contract:
+Most agents should use `spawn_cloud_agent`. The user configures account/runtime access once, and the agent only provides the task:
+
+```json
+{
+  "instruction": "Run a long-running investigation and return a concise result.",
+  "context": {
+    "source": "mcp"
+  },
+  "framework": "echo",
+  "runtime_tools": {
+    "enabled": ["web-search"]
+  }
+}
+```
+
+AgentDispatch resolves provider, account profile, `agent-runtime`, `agent.run`, and target mode from configured defaults and adapter capabilities.
+
+Power users can still call the lower-level `dispatch_task` provider-neutral contract:
 
 ```json
 {

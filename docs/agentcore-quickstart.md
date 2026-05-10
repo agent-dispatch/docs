@@ -128,20 +128,34 @@ The agent calls:
 
 ```json
 {
-  "tool": "dispatch_task",
+  "tool": "spawn_cloud_agent",
   "arguments": {
-    "provider": "aws",
-    "account_profile": "dev-aws",
-    "capability": "agent-runtime",
-    "task_type": "agent.run",
-    "target": {
-      "mode": "session"
+    "instruction": "Run a long-running investigation and return artifacts.",
+    "context": {
+      "repo": "github.com/agent-dispatch/core"
     },
-    "input": {
-      "instruction": "Run a long-running investigation and return artifacts.",
-      "context": {
-        "repo": "github.com/agent-dispatch/core"
-      }
+    "runtime_tools": {
+      "enabled": ["web-search"]
+    }
+  }
+}
+```
+
+`spawn_cloud_agent` is the simple agent-facing tool. It resolves provider, account profile, capability, task type, and target from config. The lower-level `dispatch_task` tool remains available for explicit routing:
+
+```json
+{
+  "provider": "aws",
+  "account_profile": "dev-aws",
+  "capability": "agent-runtime",
+  "task_type": "agent.run",
+  "target": {
+    "mode": "session"
+  },
+  "input": {
+    "instruction": "Run a long-running investigation and return artifacts.",
+    "context": {
+      "repo": "github.com/agent-dispatch/core"
     }
   }
 }
