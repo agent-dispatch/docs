@@ -78,11 +78,23 @@ Create `agentdispatch.config.json`:
       }
     }
   },
+  "runtimes": {
+    "research-agent": {
+      "provider": "aws",
+      "account": "dev-aws",
+      "capability": "agent-runtime",
+      "backend": "aws-agentcore",
+      "target": {
+        "mode": "session"
+      },
+      "framework": "strands",
+      "runtimeTools": {
+        "enabled": ["web-search"]
+      }
+    }
+  },
   "defaults": {
-    "provider": "aws",
-    "accountProfile": "dev-aws",
-    "capability": "agent-runtime",
-    "backend": "aws-agentcore"
+    "runtime": "research-agent"
   }
 }
 ```
@@ -130,18 +142,16 @@ The agent calls:
 {
   "tool": "spawn_cloud_agent",
   "arguments": {
+    "runtime": "research-agent",
     "instruction": "Run a long-running investigation and return artifacts.",
     "context": {
       "repo": "github.com/agent-dispatch/core"
-    },
-    "runtime_tools": {
-      "enabled": ["web-search"]
     }
   }
 }
 ```
 
-`spawn_cloud_agent` is the simple agent-facing tool. It resolves provider, account profile, capability, task type, and target from config. The lower-level `dispatch_task` tool remains available for explicit routing:
+`spawn_cloud_agent` is the simple agent-facing tool. It resolves provider, account profile, backend, capability, task type, target, framework, and runtime tool defaults from config. If `defaults.runtime` is set, the agent can omit the `runtime` field. The lower-level `dispatch_task` tool remains available for explicit routing:
 
 ```json
 {

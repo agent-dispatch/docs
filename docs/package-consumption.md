@@ -83,6 +83,24 @@ Users configure cloud accounts outside MCP calls. Raw cloud credentials are neve
       }
     }
   },
+  "runtimes": {
+    "research-agent": {
+      "provider": "aws",
+      "account": "dev-aws",
+      "capability": "agent-runtime",
+      "backend": "aws-agentcore",
+      "target": {
+        "mode": "session"
+      },
+      "framework": "strands",
+      "runtimeTools": {
+        "enabled": ["web-search", "code-interpreter"]
+      }
+    }
+  },
+  "defaults": {
+    "runtime": "research-agent"
+  },
   "policy": {
     "defaultEffect": "deny",
     "rules": [
@@ -132,18 +150,15 @@ Most agents should use `spawn_cloud_agent`. The user configures account/runtime 
 
 ```json
 {
+  "runtime": "research-agent",
   "instruction": "Run a long-running investigation and return a concise result.",
   "context": {
     "source": "mcp"
-  },
-  "framework": "echo",
-  "runtime_tools": {
-    "enabled": ["web-search"]
   }
 }
 ```
 
-AgentDispatch resolves provider, account profile, `agent-runtime`, `agent.run`, and target mode from configured defaults and adapter capabilities.
+AgentDispatch resolves provider, account profile, backend, `agent-runtime`, `agent.run`, target mode, framework, and runtime tool defaults from the named runtime profile. If `defaults.runtime` is configured, the agent can omit `runtime` too.
 
 Power users can still call the lower-level `dispatch_task` provider-neutral contract:
 
