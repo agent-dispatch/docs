@@ -1,6 +1,6 @@
 # AgentCore Quickstart
 
-This quickstart shows the V1 AgentDispatch flow: an MCP-capable agent calls AgentDispatch, AgentDispatch dispatches a long-running task to AWS AgentCore, and the caller receives a durable task handle immediately.
+This quickstart shows the V1 AgentDispatch flow: an MCP-capable lead agent calls AgentDispatch, AgentDispatch spawns or selects an AWS AgentCore runtime session, and the caller receives a durable task handle plus cloud-agent connection metadata. For A2A runtimes, the lead agent then talks to the cloud subagent through A2A using the returned AgentCore details.
 
 ## Repositories
 
@@ -27,7 +27,7 @@ Session mode requires:
 
 - AWS credentials available through the AWS SDK default provider chain.
 - An existing AgentCore Runtime ARN.
-- IAM permission for `bedrock-agentcore:InvokeAgentRuntime`, `bedrock-agentcore:InvokeAgentRuntimeCommand`, and `bedrock-agentcore:StopRuntimeSession`.
+- IAM permission for `bedrock-agentcore:InvokeAgentRuntime`, `bedrock-agentcore:InvokeAgentRuntimeCommand`, `bedrock-agentcore:GetAgentCard`, and `bedrock-agentcore:StopRuntimeSession`.
 
 Runtime mode additionally requires:
 
@@ -79,7 +79,8 @@ Create `agentdispatch.config.json`:
       "account": "dev-aws",
       "details": {
         "runtimeArn": "arn:aws:bedrock-agentcore:us-west-2:123456789012:agent/00000000-0000-0000-0000-000000000000:1",
-        "qualifier": "DEFAULT"
+        "qualifier": "DEFAULT",
+        "protocol": "a2a"
       }
     }
   },
@@ -89,10 +90,16 @@ Create `agentdispatch.config.json`:
       "account": "dev-aws",
       "capability": "agent-runtime",
       "backend": "aws-agentcore",
+      "protocol": "a2a",
       "target": {
-        "mode": "session"
+        "mode": "session",
+        "protocol": "a2a"
       },
       "framework": "strands",
+      "model": {
+        "provider": "bedrock",
+        "modelId": "anthropic.claude-3-5-sonnet"
+      },
       "runtimeTools": {
         "enabled": ["web-search"]
       }
@@ -163,7 +170,7 @@ The agent calls:
 }
 ```
 
-`spawn_cloud_agent` is the simple agent-facing tool. It resolves provider, account profile, backend, capability, task type, target, framework, and runtime tool defaults from config. If `defaults.runtime` is set, the agent can omit the `runtime` field. The lower-level `dispatch_task` tool remains available for explicit routing:
+`spawn_cloud_agent` is the simple agent-facing tool. It resolves provider, account profile, backend, capability, task type, target, protocol, model, framework, and runtime tool defaults from config. If `defaults.runtime` is set, the agent can omit the `runtime` field. The lower-level `dispatch_task` tool remains available for explicit routing:
 
 ```json
 {
@@ -195,6 +202,28 @@ Expected immediate response:
   "accountProfile": "dev-aws",
   "capability": "agent-runtime",
   "backend": "aws-agentcore",
+  "cloudAgent": {
+    "protocol": "a2a",
+    "sessionId": "agentcore_session_...",
+    "providerRefs": {
+      "region": "us-west-2",
+      "runtimeArn": "arn:aws:bedrock-agentcore:us-west-2:123456789012:agent/...",
+      "qualifier": "DEFAULT",
+      "runtimeSessionId": "agentcore_session_..."
+    },
+    "invocation": {
+      "type": "aws.agentcore.invoke_agent_runtime",
+      "agentRuntimeArn": "arn:aws:bedrock-agentcore:us-west-2:123456789012:agent/...",
+      "qualifier": "DEFAULT",
+      "runtimeSessionId": "agentcore_session_...",
+      "payloadFormat": "a2a.jsonrpc.message-send"
+    },
+    "a2a": {
+      "transport": "json-rpc-2.0-http",
+      "messageMethod": "message/send",
+      "agentCardOperation": "GetAgentCard"
+    }
+  },
   "poll": {
     "statusTool": "get_task_status",
     "logsTool": "get_task_logs",
@@ -208,6 +237,7 @@ The agent can then call:
 - `get_task_status` with the task ID
 - `get_task_logs` with the task ID and optional cursor
 - `get_task_result` after the task reaches a terminal state
+- A2A follow-up calls using `cloudAgent.invocation.runtimeSessionId` and `cloudAgent.a2a.messageMethod`
 - `cancel_task` to request cancellation and AgentCore session stop
 
 ## Optional Runtime Mode
