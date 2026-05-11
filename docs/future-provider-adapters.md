@@ -1,6 +1,6 @@
 # Future Provider Adapter Guide
 
-AgentDispatch must add providers without changing MCP tools. New providers implement the `BackendAdapter` interface from `@agentdispatch/core` and are selected by the routing key:
+AgentDispatch must add providers without changing MCP tools. New providers implement the `BackendAdapter` interface from `@agent-dispatch/core` and are selected by the routing key:
 
 ```text
 provider + capability + task_type + target.mode
@@ -94,7 +94,7 @@ MCP calls reference `account_profile`; they never pass raw credentials.
 
 Every adapter should:
 
-- import `assertBackendAdapterContract` from `@agentdispatch/core`
+- import `assertBackendAdapterContract` from `@agent-dispatch/core`
 - test supported capabilities and target modes
 - test provider error normalization
 - test cancellation and cleanup

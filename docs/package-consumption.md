@@ -1,31 +1,31 @@
 # Package Consumption Guide
 
-AgentDispatch is split into separate repositories and npm packages under the `@agentdispatch` scope. `@agentdispatch/core` is the compatibility anchor: stores, adapters, SDKs, the MCP server, and the CLI all align to the same core major version.
+AgentDispatch is split into separate repositories and npm packages under the `@agent-dispatch` scope. `@agent-dispatch/core` is the compatibility anchor: stores, adapters, SDKs, the MCP server, and the CLI all align to the same core major version.
 
 ## Install Packages
 
 For an MCP-first local runtime using AWS AgentCore and SQLite:
 
 ```bash
-npm install @agentdispatch/mcp-server @agentdispatch/store-sqlite @agentdispatch/adapter-aws-agentcore
+npm install @agent-dispatch/mcp-server @agent-dispatch/store-sqlite @agent-dispatch/adapter-aws-agentcore
 ```
 
 For command-line usage:
 
 ```bash
-npm install -g @agentdispatch/cli
+npm install -g @agent-dispatch/cli
 ```
 
 For SDK usage inside an application:
 
 ```bash
-npm install @agentdispatch/sdk @agentdispatch/core
+npm install @agent-dispatch/sdk @agent-dispatch/core
 ```
 
 For custom in-process runtimes, install the store and adapter packages explicitly:
 
 ```bash
-npm install @agentdispatch/core @agentdispatch/sdk @agentdispatch/store-sqlite @agentdispatch/adapter-aws-agentcore
+npm install @agent-dispatch/core @agent-dispatch/sdk @agent-dispatch/store-sqlite @agent-dispatch/adapter-aws-agentcore
 ```
 
 For building the reference AgentCore worker image:
@@ -40,18 +40,18 @@ npm run image:push:ecr
 
 Publish packages in dependency order:
 
-1. `@agentdispatch/core`
-2. `@agentdispatch/store-sqlite`
-3. `@agentdispatch/adapter-aws-agentcore`
-4. `@agentdispatch/sdk`
-5. `@agentdispatch/mcp-server`
-6. `@agentdispatch/cli`
-7. `@agentdispatch/worker-agentcore`
+1. `@agent-dispatch/core`
+2. `@agent-dispatch/store-sqlite`
+3. `@agent-dispatch/adapter-aws-agentcore`
+4. `@agent-dispatch/sdk`
+5. `@agent-dispatch/mcp-server`
+6. `@agent-dispatch/cli`
+7. `@agent-dispatch/worker-agentcore`
 
 Compatibility rule:
 
-- `@agentdispatch/core` owns provider-neutral types and adapter contracts.
-- Adapters, stores, SDK, MCP, and CLI use `@agentdispatch/core` as a peer dependency where practical.
+- `@agent-dispatch/core` owns provider-neutral types and adapter contracts.
+- Adapters, stores, SDK, MCP, and CLI use `@agent-dispatch/core` as a peer dependency where practical.
 - Packages with the same major version are expected to be compatible.
 - New providers should ship as new adapter packages without adding MCP tools.
 
@@ -211,4 +211,4 @@ agentdispatch run \
 
 ## Future Providers
 
-Future packages such as `@agentdispatch/adapter-gcp-cloud-run`, `@agentdispatch/adapter-azure-container-apps`, or `@agentdispatch/adapter-kubernetes` should only add adapters and config profiles. They must fit the same MCP contract by declaring provider, capability, task type, and target mode support through `@agentdispatch/core`.
+Future packages such as `@agent-dispatch/adapter-gcp-cloud-run`, `@agent-dispatch/adapter-azure-container-apps`, or `@agent-dispatch/adapter-kubernetes` should only add adapters and config profiles. They must fit the same MCP contract by declaring provider, capability, task type, and target mode support through `@agent-dispatch/core`.

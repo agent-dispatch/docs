@@ -8,7 +8,7 @@ AgentDispatch is a provider-neutral control plane for durable agent task executi
 - AWS AgentCore is the first provider backend.
 - SQLite and filesystem storage provide local OSS durability.
 - Each package lives in a separate repository under `agent-dispatch`.
-- `@agentdispatch/core` is the compatibility anchor.
+- `@agent-dispatch/core` is the compatibility anchor.
 - Agent framework adapters are worker-side plugins, separate from cloud backend adapters.
 
 ## Provider-Neutral Routing

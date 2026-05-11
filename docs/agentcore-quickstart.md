@@ -26,7 +26,7 @@ Session mode requires:
 
 Runtime mode additionally requires:
 
-- A prebuilt ECR image for `@agentdispatch/worker-agentcore` or a compatible worker.
+- A prebuilt ECR image for `@agent-dispatch/worker-agentcore` or a compatible worker.
 - An AgentCore execution role ARN.
 - AgentCore control-plane permissions to create endpoint/runtime resources and delete them after completion.
 
@@ -237,7 +237,7 @@ AgentDispatch creates runtime resources, runs the task, persists task state/logs
 
 ## AgentCore Runtime Compatibility Notes
 
-AgentCore Runtime HTTP containers are expected to listen on port `8080`, expose `POST /invocations` for invocation payloads, and expose `GET /ping` for health. The reference `@agentdispatch/worker-agentcore` image follows this shape and returns `{"status":"Healthy"}` from `/ping`.
+AgentCore Runtime HTTP containers are expected to listen on port `8080`, expose `POST /invocations` for invocation payloads, and expose `GET /ping` for health. The reference `@agent-dispatch/worker-agentcore` image follows this shape and returns `{"status":"Healthy"}` from `/ping`.
 
 AgentCore command execution streams `contentStart`, `contentDelta`, and `contentStop` chunks. AgentDispatch maps these to provider-neutral progress/log events and a command exit result.
 
