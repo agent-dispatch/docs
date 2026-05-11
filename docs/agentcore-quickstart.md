@@ -112,6 +112,13 @@ agentdispatch init \
   --runtime-arn arn:aws:bedrock-agentcore:us-west-2:123456789012:agent/00000000-0000-0000-0000-000000000000:1
 ```
 
+Validate local config before dispatching real work:
+
+```bash
+agentdispatch doctor --config agentdispatch.config.json
+agentdispatch-mcp --config agentdispatch.config.json --check
+```
+
 ## Run The MCP Server
 
 ```bash
