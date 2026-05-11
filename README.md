@@ -55,14 +55,15 @@ New providers should fit the same MCP contract:
 
 ## Package docs
 
-- [`@agent-dispatch/core`](https://github.com/agent-dispatch/agentdispatch-core)
-- [`@agent-dispatch/mcp-server`](https://github.com/agent-dispatch/agentdispatch-mcp-server)
-- [`@agent-dispatch/sdk`](https://github.com/agent-dispatch/agentdispatch-sdk-js)
-- [`@agent-dispatch/cli`](https://github.com/agent-dispatch/agentdispatch-cli)
-- [`@agent-dispatch/store-sqlite`](https://github.com/agent-dispatch/agentdispatch-store-sqlite)
-- [`@agent-dispatch/adapter-aws-agentcore`](https://github.com/agent-dispatch/agentdispatch-adapter-aws-agentcore)
-- [`@agent-dispatch/worker-agentcore`](https://github.com/agent-dispatch/agentdispatch-worker-agentcore)
-- [`@agent-dispatch/adapter-template`](https://github.com/agent-dispatch/agentdispatch-adapter-template)
+- [`@agent-dispatch/core`](https://github.com/agent-dispatch/core)
+- [`@agent-dispatch/mcp-server`](https://github.com/agent-dispatch/mcp-server)
+- [`@agent-dispatch/sdk`](https://github.com/agent-dispatch/sdk-js)
+- [`@agent-dispatch/cli`](https://github.com/agent-dispatch/cli)
+- [`@agent-dispatch/store-sqlite`](https://github.com/agent-dispatch/store-sqlite)
+- [`@agent-dispatch/adapter-aws-agentcore`](https://github.com/agent-dispatch/adapter-aws-agentcore)
+- [`@agent-dispatch/worker-agentcore`](https://github.com/agent-dispatch/worker-agentcore)
+- [`@agent-dispatch/adapter-template`](https://github.com/agent-dispatch/adapter-template)
+- [`@agent-dispatch/website`](https://github.com/agent-dispatch/website)
 
 ## Status
 
