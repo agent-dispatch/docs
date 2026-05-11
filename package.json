@@ -1,0 +1,14 @@
+{
+  "name": "@agent-dispatch/docs",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "lint:markdown": "markdownlint-cli2",
+    "lint:links": "node scripts/check-local-links.mjs",
+    "test": "npm run lint:markdown && npm run lint:links"
+  },
+  "devDependencies": {
+    "markdownlint-cli2": "^0.17.2"
+  }
+}
