@@ -7,7 +7,7 @@ AgentDispatch is split into separate repositories and npm packages under the `@a
 For an MCP-first local runtime using AWS AgentCore and SQLite:
 
 ```bash
-npm install @agent-dispatch/mcp-server @agent-dispatch/store-sqlite @agent-dispatch/adapter-aws-agentcore
+npm install @agent-dispatch/core @agent-dispatch/mcp-server @agent-dispatch/store-sqlite @agent-dispatch/adapter-aws-agentcore
 ```
 
 For command-line usage:
@@ -78,7 +78,7 @@ Users configure cloud accounts outside MCP calls. Raw cloud credentials are neve
       "adapter": "aws-agentcore",
       "account": "dev-aws",
       "details": {
-        "runtimeArn": "arn:aws:bedrock-agentcore:us-west-2:123456789012:runtime/example",
+        "runtimeArn": "arn:aws:bedrock-agentcore:us-west-2:123456789012:agent/00000000-0000-0000-0000-000000000000:1",
         "qualifier": "DEFAULT"
       }
     }

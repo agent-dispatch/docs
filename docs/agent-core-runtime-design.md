@@ -349,7 +349,7 @@ A normalized task submission request should look conceptually like this:
     "backend": "aws-agentcore",
     "backend_ref": {
       "region": "us-west-2",
-      "runtime_arn": "arn:aws:bedrock-agentcore:us-west-2:123456789012:runtime/agentdispatch-worker",
+      "runtime_arn": "arn:aws:bedrock-agentcore:us-west-2:123456789012:agent/00000000-0000-0000-0000-000000000000:1",
       "qualifier": "DEFAULT"
     },
     "timeout_seconds": 3600,

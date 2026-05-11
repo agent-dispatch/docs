@@ -4,7 +4,14 @@ This quickstart shows the V1 AgentDispatch flow: an MCP-capable agent calls Agen
 
 ## Repositories
 
-Clone the first-run packages:
+Install the published packages for local use:
+
+```bash
+npm install -g @agent-dispatch/cli
+npm install @agent-dispatch/core @agent-dispatch/mcp-server @agent-dispatch/store-sqlite @agent-dispatch/adapter-aws-agentcore
+```
+
+Or clone the repos when developing the packages themselves:
 
 ```bash
 git clone https://github.com/agent-dispatch/core
@@ -13,8 +20,6 @@ git clone https://github.com/agent-dispatch/adapter-aws-agentcore
 git clone https://github.com/agent-dispatch/mcp-server
 git clone https://github.com/agent-dispatch/cli
 ```
-
-Until packages are published to npm, develop from the local bootstrap workspace that keeps sibling `file:../` package links.
 
 ## AWS Prerequisites
 
@@ -73,7 +78,7 @@ Create `agentdispatch.config.json`:
       "adapter": "aws-agentcore",
       "account": "dev-aws",
       "details": {
-        "runtimeArn": "arn:aws:bedrock-agentcore:us-west-2:123456789012:runtime/example",
+        "runtimeArn": "arn:aws:bedrock-agentcore:us-west-2:123456789012:agent/00000000-0000-0000-0000-000000000000:1",
         "qualifier": "DEFAULT"
       }
     }
@@ -104,7 +109,7 @@ The CLI can generate this file:
 ```bash
 agentdispatch init \
   --region us-west-2 \
-  --runtime-arn arn:aws:bedrock-agentcore:us-west-2:123456789012:runtime/example
+  --runtime-arn arn:aws:bedrock-agentcore:us-west-2:123456789012:agent/00000000-0000-0000-0000-000000000000:1
 ```
 
 ## Run The MCP Server
