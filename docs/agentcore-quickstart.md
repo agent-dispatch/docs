@@ -204,24 +204,33 @@ Expected immediate response:
   "backend": "aws-agentcore",
   "cloudAgent": {
     "protocol": "a2a",
-    "sessionId": "agentcore_session_...",
+    "sessionId": "ad-f7221e93f25499a0a1fc0160f63c7621",
     "providerRefs": {
       "region": "us-west-2",
       "runtimeArn": "arn:aws:bedrock-agentcore:us-west-2:123456789012:agent/...",
       "qualifier": "DEFAULT",
-      "runtimeSessionId": "agentcore_session_..."
+      "runtimeSessionId": "ad-f7221e93f25499a0a1fc0160f63c7621",
+      "runtimeUrl": "https://bedrock-agentcore.us-west-2.amazonaws.com/runtimes/.../invocations/"
     },
     "invocation": {
       "type": "aws.agentcore.invoke_agent_runtime",
+      "runtimeUrl": "https://bedrock-agentcore.us-west-2.amazonaws.com/runtimes/.../invocations/",
       "agentRuntimeArn": "arn:aws:bedrock-agentcore:us-west-2:123456789012:agent/...",
       "qualifier": "DEFAULT",
-      "runtimeSessionId": "agentcore_session_...",
+      "runtimeSessionId": "ad-f7221e93f25499a0a1fc0160f63c7621",
+      "sessionHeaderName": "X-Amzn-Bedrock-AgentCore-Runtime-Session-Id",
+      "sessionHeaderValue": "ad-f7221e93f25499a0a1fc0160f63c7621",
+      "contentType": "application/json",
+      "accept": "application/json",
       "payloadFormat": "a2a.jsonrpc.message-send"
     },
     "a2a": {
       "transport": "json-rpc-2.0-http",
       "messageMethod": "message/send",
-      "agentCardOperation": "GetAgentCard"
+      "agentCardPath": "/.well-known/agent-card.json",
+      "agentCardOperation": "GetAgentCard",
+      "endpointUrl": "https://bedrock-agentcore.us-west-2.amazonaws.com/runtimes/.../invocations/",
+      "agentCardUrl": "https://bedrock-agentcore.us-west-2.amazonaws.com/runtimes/.../invocations/.well-known/agent-card.json"
     }
   },
   "poll": {
@@ -239,6 +248,47 @@ The agent can then call:
 - `get_task_result` after the task reaches a terminal state
 - A2A follow-up calls using `cloudAgent.invocation.runtimeSessionId` and `cloudAgent.a2a.messageMethod`
 - `cancel_task` to request cancellation and AgentCore session stop
+
+## Verify End To End
+
+Run the deterministic local smoke path first. It does not call AWS; it verifies MCP stdio-compatible transport, config bootstrap, adapter routing, SQLite persistence, logs, and result retrieval:
+
+```bash
+cd mcp-server
+npm run typecheck
+npm test -- --run
+npm run build
+```
+
+Run the AWS adapter unit and live-test surface:
+
+```bash
+cd adapter-aws-agentcore
+npm run typecheck
+npm test -- --run
+npm run build
+```
+
+Live AgentCore tests are opt-in because they invoke real AWS resources. Session-mode `agent.run` requires an existing runtime ARN:
+
+```bash
+cd adapter-aws-agentcore
+export AGENTDISPATCH_LIVE_AGENTCORE=1
+export AGENTDISPATCH_LIVE_AGENTCORE_AGENT_RUN=1
+export AGENTDISPATCH_AWS_REGION=us-west-2
+export AGENTDISPATCH_AGENTCORE_RUNTIME_ARN=arn:aws:bedrock-agentcore:us-west-2:123456789012:agent/00000000-0000-0000-0000-000000000000:1
+export AGENTDISPATCH_AGENTCORE_PROTOCOL=a2a
+npm test -- --run test/live.test.ts
+```
+
+Runtime-mode live testing also needs a pushed worker image and execution role:
+
+```bash
+export AGENTDISPATCH_LIVE_AGENTCORE_RUNTIME_MODE=true
+export AGENTDISPATCH_AGENTCORE_RUNTIME_ECR_IMAGE_URI=123456789012.dkr.ecr.us-west-2.amazonaws.com/agentdispatch-worker-agentcore:latest
+export AGENTDISPATCH_AGENTCORE_EXECUTION_ROLE_ARN=arn:aws:iam::123456789012:role/AgentDispatchAgentCoreExecutionRole
+npm test -- --run test/live.test.ts
+```
 
 ## Optional Runtime Mode
 
@@ -279,7 +329,16 @@ AgentDispatch creates runtime resources, runs the task, persists task state/logs
 
 ## AgentCore Runtime Compatibility Notes
 
-AgentCore Runtime HTTP containers are expected to listen on port `8080`, expose `POST /invocations` for invocation payloads, and expose `GET /ping` for health. The reference `@agent-dispatch/worker-agentcore` image follows this shape and returns `{"status":"Healthy"}` from `/ping`.
+AgentCore Runtime containers use protocol-specific service contracts. HTTP containers listen on port `8080`, expose `POST /invocations` for invocation payloads, and expose `GET /ping` for health. A2A containers listen on port `9000` at the root path and expose Agent Card discovery at `/.well-known/agent-card.json`.
+
+The reference `@agent-dispatch/worker-agentcore` image defaults to A2A for AgentDispatch runtime-mode deployments. It returns `{"status":"Healthy"}` from `/ping`, serves the Agent Card path, and accepts JSON-RPC `message/send` on `/`. For HTTP envelope mode, run it with `AGENTDISPATCH_WORKER_PROTOCOL=http PORT=8080`.
+
+References:
+
+- [Deploy A2A servers in AgentCore Runtime](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-a2a.html)
+- [Invoke an AgentCore Runtime agent](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-invoke-agent.html)
+- [Use isolated sessions for agents](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-sessions.html)
+- [Understand the AgentCore Runtime service contract](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-service-contract.html)
 
 AgentCore command execution streams `contentStart`, `contentDelta`, and `contentStop` chunks. AgentDispatch maps these to provider-neutral progress/log events and a command exit result.
 
