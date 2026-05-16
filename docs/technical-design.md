@@ -37,6 +37,8 @@ AgentDispatch has two extension axes:
 
 Framework selection is data-plane configuration. It should not become part of core provider routing unless dispatch scheduling truly needs it. A worker can select a framework from `input.framework`, top-level `framework`, or worker environment defaults while the MCP contract remains `dispatch_task`.
 
+The reference AgentCore worker supports command-backed adapters. A runtime image can set `AGENTDISPATCH_FRAMEWORK_COMMAND_OPENCLAW`, `AGENTDISPATCH_FRAMEWORK_COMMAND_HERMES`, or `AGENTDISPATCH_FRAMEWORK_COMMANDS` to bind framework names to CLIs. The worker sends the normalized task envelope to the framework command over `stdin`, then maps plain-text or structured JSON output back into provider-neutral events, results, and artifacts.
+
 Example:
 
 ```json

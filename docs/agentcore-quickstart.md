@@ -126,6 +126,32 @@ agentdispatch doctor --config agentdispatch.config.json
 agentdispatch-mcp --config agentdispatch.config.json --check
 ```
 
+## Configure The Cloud Worker Framework
+
+`framework` is not a cloud-provider concept. It is the agent loop that runs inside your AgentCore runtime image. For OpenClaw, Hermes Agent, Strands, LangChain, or an internal runner, configure the worker process with command-backed framework adapters:
+
+```bash
+AGENTDISPATCH_AGENT_FRAMEWORK=openclaw
+AGENTDISPATCH_FRAMEWORK_COMMAND_OPENCLAW="openclaw run --stdin-json"
+```
+
+For multiple frameworks in one runtime image:
+
+```bash
+AGENTDISPATCH_FRAMEWORK_COMMANDS='{
+  "openclaw": "openclaw run --stdin-json",
+  "hermes": {
+    "command": "hermes-agent run --stdin-json",
+    "timeoutSeconds": 1800,
+    "env": {
+      "HERMES_MODE": "subagent"
+    }
+  }
+}'
+```
+
+In `runtime` target mode, pass those variables through `target.details.environmentVariables` so AgentDispatch sets them when creating the AgentCore runtime resource. In `session` target mode, set them on the prebuilt AgentCore runtime image before registering the runtime ARN.
+
 ## Run The MCP Server
 
 ```bash
