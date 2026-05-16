@@ -6,6 +6,7 @@
   "scripts": {
     "lint:markdown": "markdownlint-cli2",
     "lint:links": "node scripts/check-local-links.mjs",
+    "smoke:packages": "node scripts/smoke-packages.mjs",
     "test": "npm run lint:markdown && npm run lint:links"
   },
   "devDependencies": {

@@ -57,6 +57,27 @@ Compatibility rule:
 
 During bootstrap, repositories may use sibling `file:../` dependencies. Registry consumers should use published semver ranges such as `^0.1.0`.
 
+## Local Packed-Package Smoke Test
+
+When changing cross-package contracts, validate the installed-product shape, not only source tests:
+
+```bash
+cd agentdispatch-docs
+npm run smoke:packages
+```
+
+The smoke script expects the sibling repositories to exist under the same workspace directory:
+
+- `agentdispatch-core`
+- `agentdispatch-store-sqlite`
+- `agentdispatch-adapter-aws-agentcore`
+- `agentdispatch-sdk-js`
+- `agentdispatch-worker-agentcore`
+- `agentdispatch-mcp-server`
+- `agentdispatch-cli`
+
+It builds and packs each package in dependency order, installs the tarballs into a fresh temporary consumer project, imports every public package, runs `agentdispatch init`, runs `agentdispatch doctor --json`, and runs `agentdispatch-mcp --check`. Set `AGENTDISPATCH_WORKSPACE_ROOT=/path/to/workspace` when running from a different checkout layout.
+
 ## Account Profile Config
 
 Users configure cloud accounts outside MCP calls. Raw cloud credentials are never passed through MCP.
