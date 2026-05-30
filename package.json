@@ -1,8 +1,20 @@
 {
   "name": "@agent-dispatch/docs",
   "version": "0.1.0",
+  "description": "Documentation and verification gates for AgentDispatch.",
   "private": true,
   "type": "module",
+  "license": "Apache-2.0",
+  "keywords": [
+    "agentdispatch",
+    "docs",
+    "mcp",
+    "model-context-protocol",
+    "cloud-agents",
+    "subagents",
+    "aws-agentcore",
+    "agent-orchestration"
+  ],
   "scripts": {
     "lint:markdown": "markdownlint-cli2",
     "lint:links": "node scripts/check-local-links.mjs",
@@ -12,6 +24,14 @@
     "verify:aws-live": "bash scripts/verify-aws-live.sh"
   },
   "devDependencies": {
-    "markdownlint-cli2": "^0.17.2"
-  }
+    "markdownlint-cli2": "^0.22.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/agent-dispatch/docs.git"
+  },
+  "bugs": {
+    "url": "https://github.com/agent-dispatch/docs/issues"
+  },
+  "homepage": "https://github.com/agent-dispatch/docs#readme"
 }

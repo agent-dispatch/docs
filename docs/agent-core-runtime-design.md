@@ -570,7 +570,7 @@ A major product requirement is that these are not separate systems.
 They should all map onto the same runtime primitives.
 
 | Surface | User mental model | Runtime primitive |
-|---|---|---|
+| --- | --- | --- |
 | SDK | async function / future | task handle |
 | CLI | command invocation + attach | task + optional session |
 | MCP | remote tool call with durable continuation | task handle + polling/stream |
@@ -816,7 +816,7 @@ It should not own:
 ### Primitive mapping
 
 | AgentDispatch primitive | AgentCore primitive |
-|---|---|
+| --- | --- |
 | Runtime backend | AgentCore adapter configuration |
 | Worker | AgentCore Runtime endpoint/version |
 | Session | AgentCore runtime session ID |
