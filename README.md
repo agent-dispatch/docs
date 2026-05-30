@@ -10,6 +10,7 @@ Documentation for AgentDispatch: the provider-neutral MCP control plane for spaw
 - [AgentCore runtime design](./docs/agent-core-runtime-design.md) — deeper AgentCore runtime notes and implementation decisions.
 - [Future provider adapters](./docs/future-provider-adapters.md) — how GCP, Azure, Kubernetes, and local adapters fit the same MCP contract.
 - [Package consumption](./docs/package-consumption.md) — how the separate repos and NPM packages work together.
+- [Repo launch checklist](./docs/repo-launch-checklist.md) — GitHub, npm, docs, demo, and social-readiness checklist for a high-signal public launch.
 
 ## Mental model
 

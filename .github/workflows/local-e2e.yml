@@ -1,0 +1,87 @@
+name: Local E2E
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 8 * * 1"
+
+jobs:
+  local-e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout docs
+        uses: actions/checkout@v4
+        with:
+          path: agentdispatch/agentdispatch-docs
+
+      - name: Checkout core
+        uses: actions/checkout@v4
+        with:
+          repository: agent-dispatch/core
+          path: agentdispatch/agentdispatch-core
+
+      - name: Checkout store-sqlite
+        uses: actions/checkout@v4
+        with:
+          repository: agent-dispatch/store-sqlite
+          path: agentdispatch/agentdispatch-store-sqlite
+
+      - name: Checkout adapter-aws-agentcore
+        uses: actions/checkout@v4
+        with:
+          repository: agent-dispatch/adapter-aws-agentcore
+          path: agentdispatch/agentdispatch-adapter-aws-agentcore
+
+      - name: Checkout worker-agentcore
+        uses: actions/checkout@v4
+        with:
+          repository: agent-dispatch/worker-agentcore
+          path: agentdispatch/agentdispatch-worker-agentcore
+
+      - name: Checkout sdk-js
+        uses: actions/checkout@v4
+        with:
+          repository: agent-dispatch/sdk-js
+          path: agentdispatch/agentdispatch-sdk-js
+
+      - name: Checkout mcp-server
+        uses: actions/checkout@v4
+        with:
+          repository: agent-dispatch/mcp-server
+          path: agentdispatch/agentdispatch-mcp-server
+
+      - name: Checkout cli
+        uses: actions/checkout@v4
+        with:
+          repository: agent-dispatch/cli
+          path: agentdispatch/agentdispatch-cli
+
+      - name: Checkout adapter-template
+        uses: actions/checkout@v4
+        with:
+          repository: agent-dispatch/adapter-template
+          path: agentdispatch/agentdispatch-adapter-template
+
+      - name: Checkout website
+        uses: actions/checkout@v4
+        with:
+          repository: agent-dispatch/website
+          path: agentdispatch/agentdispatch-website
+
+      - name: Checkout GitHub profile
+        uses: actions/checkout@v4
+        with:
+          repository: agent-dispatch/.github
+          path: agentdispatch/agentdispatch-github-profile
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Verify local multi-repo E2E
+        run: npm --prefix agentdispatch/agentdispatch-docs run verify:local-e2e
+        env:
+          AGENTDISPATCH_VERIFY_INSTALL: "1"

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { spawn } from "node:child_process";
-import { access, mkdtemp, readFile, rm } from "node:fs/promises";
+import { access, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { constants } from "node:fs";
 import { tmpdir } from "node:os";
 import { basename, dirname, join, resolve } from "node:path";
@@ -68,6 +68,10 @@ try {
     ].join("")
   ], { cwd: consumerDir });
 
+  const localSpawnSmokePath = join(consumerDir, "local-spawn-smoke.mjs");
+  await writeFile(localSpawnSmokePath, localSpawnSmokeSource());
+  await run("node", [localSpawnSmokePath], { cwd: consumerDir });
+
   const configPath = join(consumerDir, "agentdispatch.config.json");
   await run("npx", [
     "--no-install",
@@ -122,6 +126,171 @@ function assertJsonOk(stdout, label) {
   if (parsed.ok !== true) {
     throw new Error(`${label} did not return ok:true.`);
   }
+}
+
+function localSpawnSmokeSource() {
+  return `
+import { Client } from "@modelcontextprotocol/sdk/client/index.js";
+import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
+import { mkdtemp, rm } from "node:fs/promises";
+import { join } from "node:path";
+import { tmpdir } from "node:os";
+import { RuntimeService } from "@agent-dispatch/core";
+import { SqliteTaskStore } from "@agent-dispatch/store-sqlite";
+import { createAgentDispatchMcpServer } from "@agent-dispatch/mcp-server";
+
+const stateDir = await mkdtemp(join(tmpdir(), "agentdispatch-local-spawn-"));
+try {
+  const store = new SqliteTaskStore({ stateDir });
+  await store.ensureReady();
+  const adapter = {
+    name: "local-smoke-agent-runtime",
+    provider: "aws",
+    capabilities: () => [{
+      provider: "aws",
+      capability: "agent-runtime",
+      taskTypes: ["agent.run"],
+      targetModes: ["session"],
+      protocols: ["a2a"]
+    }],
+    prepareTask: async ({ dispatch }) => ({
+      providerRefs: { runtimeSessionId: "local_smoke_session" },
+      cloudAgent: {
+        protocol: dispatch.target.protocol ?? "a2a",
+        provider: "aws",
+        backend: "local-smoke-agent-runtime",
+        accountProfile: dispatch.accountProfile,
+        sessionId: "local_smoke_session",
+        a2a: {
+          transport: "json-rpc-2.0-http",
+          messageMethod: "message/send"
+        }
+      }
+    }),
+    resolveTarget: async (request) => ({
+      account: {
+        name: request.accountProfile,
+        provider: request.provider,
+        credentialSource: "local-smoke"
+      },
+      target: {
+        provider: request.provider,
+        accountProfile: request.accountProfile,
+        capability: request.capability,
+        backend: "local-smoke-agent-runtime",
+        mode: request.target.mode,
+        protocol: request.target.protocol,
+        details: request.target.details
+      }
+    }),
+    provision: async () => ({}),
+    startTask: async ({ dispatch }) => ({
+      result: {
+        ok: true,
+        instruction: dispatch.input.instruction,
+        context: dispatch.input.context
+      }
+    }),
+    streamEvents: async function* (taskId) {
+      yield {
+        taskId,
+        type: "task.log",
+        message: "local packaged MCP spawn smoke"
+      };
+    },
+    cancel: async () => ({ status: "cancelled" }),
+    cleanup: async () => ({ status: "completed" })
+  };
+  const runtime = new RuntimeService({
+    config: {
+      accounts: {
+        "dev-aws": {
+          provider: "aws",
+          credentialSource: "aws-sdk-default"
+        }
+      },
+      backends: {
+        "local-smoke-agent-runtime": {
+          provider: "aws",
+          capability: "agent-runtime",
+          adapter: "local-smoke-agent-runtime",
+          account: "dev-aws"
+        }
+      },
+      runtimes: {
+        "research-agent": {
+          provider: "aws",
+          account: "dev-aws",
+          capability: "agent-runtime",
+          backend: "local-smoke-agent-runtime",
+          protocol: "a2a",
+          target: {
+            mode: "session",
+            protocol: "a2a"
+          },
+          framework: "echo",
+          model: {
+            provider: "local",
+            modelId: "smoke"
+          }
+        }
+      },
+      defaults: {
+        runtime: "research-agent"
+      }
+    },
+    store,
+    adapters: [adapter]
+  });
+  const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
+  const server = createAgentDispatchMcpServer(runtime);
+  const client = new Client({ name: "agentdispatch-packaged-smoke", version: "0.1.0" });
+  await server.connect(serverTransport);
+  await client.connect(clientTransport);
+  try {
+    const handle = await callJson(client, "spawn_cloud_agent", {
+      instruction: "prove packaged local MCP spawn",
+      context: { repo: "agent-dispatch" }
+    });
+    if (!handle.taskId || handle.backend !== "local-smoke-agent-runtime") {
+      throw new Error("spawn_cloud_agent did not return the expected packaged smoke handle.");
+    }
+    const terminal = await waitForTerminal(client, handle.taskId);
+    if (terminal.status !== "succeeded") {
+      throw new Error("packaged local spawn did not succeed.");
+    }
+    const logs = await callJson(client, "get_task_logs", { task_id: handle.taskId });
+    if (!logs.data.includes("local packaged MCP spawn smoke")) {
+      throw new Error("packaged local spawn logs were not persisted.");
+    }
+    const result = await callJson(client, "get_task_result", { task_id: handle.taskId });
+    if (result.result?.instruction !== "prove packaged local MCP spawn") {
+      throw new Error("packaged local spawn result was not persisted.");
+    }
+  } finally {
+    await client.close();
+    await server.close();
+  }
+} finally {
+  await rm(stateDir, { recursive: true, force: true });
+}
+
+async function callJson(client, name, args = {}) {
+  const response = await client.callTool({ name, arguments: args });
+  const text = response.content?.find((item) => item.type === "text")?.text;
+  if (!text) throw new Error(\`Tool \${name} did not return text content.\`);
+  return JSON.parse(text);
+}
+
+async function waitForTerminal(client, taskId) {
+  for (let attempt = 0; attempt < 40; attempt += 1) {
+    const status = await callJson(client, "get_task_status", { task_id: taskId });
+    if (["succeeded", "failed", "cancelled"].includes(status.status)) return status;
+    await new Promise((resolve) => setTimeout(resolve, 10));
+  }
+  throw new Error(\`Task \${taskId} did not reach a terminal status.\`);
+}
+`;
 }
 
 function run(command, args, options) {
