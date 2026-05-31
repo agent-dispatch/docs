@@ -2,6 +2,12 @@
 
 This matrix is the public proof boundary for AgentDispatch. Use it before launch posts, release notes, or README claims.
 
+Public status badges:
+
+- [Docs CI](https://github.com/agent-dispatch/docs/actions/workflows/ci.yml)
+- [Local E2E](https://github.com/agent-dispatch/docs/actions/workflows/local-e2e.yml)
+- [Live AWS Verification](https://github.com/agent-dispatch/docs/actions/workflows/live-aws-verification.yml)
+
 ## Current Local Proof
 
 Run from the parent multi-repo workspace:

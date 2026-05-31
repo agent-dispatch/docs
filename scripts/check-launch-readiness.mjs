@@ -97,6 +97,8 @@ await assertSyncedAsset(
 const docsReadme = await readFile(join(docsRoot, "README.md"), "utf8");
 mustInclude(docsReadme, "./docs/live-aws-verification.md", "README.md", "links live AWS verification runbook");
 mustInclude(docsReadme, "./docs/verification-matrix.md", "README.md", "links verification matrix");
+mustInclude(docsReadme, "actions/workflows/local-e2e.yml/badge.svg", "README.md", "shows local E2E badge");
+mustInclude(docsReadme, "actions/workflows/live-aws-verification.yml/badge.svg", "README.md", "shows live AWS verification badge");
 
 const liveWorkflow = await readFile(join(docsRoot, ".github", "workflows", "live-aws-verification.yml"), "utf8");
 for (const expected of [
@@ -114,7 +116,8 @@ for (const expected of [
   "verify:aws-live",
   "AGENTDISPATCH_LIVE_DISPATCH=1",
   "Do not use local E2E evidence as proof that live AWS dispatch works",
-  "Live AWS Verification"
+  "Live AWS Verification",
+  "actions/workflows/local-e2e.yml"
 ]) {
   mustInclude(verificationMatrix, expected, "docs/verification-matrix.md", `documents ${expected}`);
 }

@@ -1,5 +1,9 @@
 # AgentDispatch Docs
 
+[![CI](https://github.com/agent-dispatch/docs/actions/workflows/ci.yml/badge.svg)](https://github.com/agent-dispatch/docs/actions/workflows/ci.yml)
+[![Local E2E](https://github.com/agent-dispatch/docs/actions/workflows/local-e2e.yml/badge.svg)](https://github.com/agent-dispatch/docs/actions/workflows/local-e2e.yml)
+[![Live AWS Verification](https://github.com/agent-dispatch/docs/actions/workflows/live-aws-verification.yml/badge.svg)](https://github.com/agent-dispatch/docs/actions/workflows/live-aws-verification.yml)
+
 Documentation for AgentDispatch: the provider-neutral MCP control plane for spawning cloud subagents.
 
 ## Start here
