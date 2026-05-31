@@ -55,6 +55,13 @@ const status = {
       proves: "local package versions compared with currently published npm versions"
     },
     {
+      name: "security-audit",
+      status: "manual",
+      command: "npm --prefix agentdispatch-docs run status:security",
+      strictCommand: "npm --prefix agentdispatch-docs run status:security -- --strict",
+      proves: "npm audit high/critical vulnerability status across the multi-repo workspace"
+    },
+    {
       name: "release-status",
       status: missingRepos.length === 0 && dirtyRepos.length === 0 ? "ok" : "warn",
       command: "npm --prefix agentdispatch-docs run status:release",

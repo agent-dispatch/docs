@@ -23,6 +23,7 @@
     "lint:links": "node scripts/check-local-links.mjs",
     "smoke:packages": "node scripts/smoke-packages.mjs",
     "smoke:published": "node scripts/smoke-published-packages.mjs",
+    "status:security": "node scripts/check-security-audit.mjs",
     "status:npm": "node scripts/check-npm-version-drift.mjs",
     "status:release": "node scripts/release-status.mjs",
     "test": "npm run lint:markdown && npm run lint:links && npm run lint:launch",

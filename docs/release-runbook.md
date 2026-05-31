@@ -50,6 +50,18 @@ npm --prefix agentdispatch-docs run status:npm
 
 This reports which public packages are already synced with npm and which local package versions are pending publication.
 
+Audit high and critical npm vulnerabilities across all repos:
+
+```bash
+npm --prefix agentdispatch-docs run status:security
+```
+
+Use the strict form before release automation:
+
+```bash
+npm --prefix agentdispatch-docs run status:security -- --strict
+```
+
 ## Required Published-Install Gate
 
 After the package line is published, run the registry canary:

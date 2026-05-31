@@ -60,6 +60,12 @@ To compare local package versions with npm before publishing:
 npm --prefix agentdispatch-docs run status:npm
 ```
 
+To audit high and critical npm vulnerabilities across the workspace:
+
+```bash
+npm --prefix agentdispatch-docs run status:security
+```
+
 AgentDispatch gives lead agents one stable way to hand off long-running work:
 
 ```mermaid

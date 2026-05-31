@@ -71,10 +71,12 @@ Before telling users to install from npm, run both npm checks:
 
 ```bash
 npm --prefix agentdispatch-docs run status:npm
+npm --prefix agentdispatch-docs run status:security
 npm --prefix agentdispatch-docs run smoke:published
 ```
 
 `status:npm` tells you whether local package versions are synced, pending publication, missing on npm, or unexpectedly behind npm. `smoke:published` installs the currently published packages in a fresh consumer and verifies public imports plus the CLI and MCP binaries.
+`status:security` runs `npm audit` across the workspace and reports high or critical findings separately from the default local E2E gate.
 
 If `status:npm` reports `pending-publish`, do not imply the unpublished local changes are already available through npm.
 
@@ -110,6 +112,7 @@ Live AWS dispatch verified against a real AgentCore runtime.
 | `agentdispatch-local-e2e-report.json` has `ok: true` | The current workspace passes the local multi-repo AgentDispatch gate. |
 | `status:release` says `Local launch claim ready from repo state: yes` | The checked-out repos are present and clean. |
 | `status:npm` has no `local-behind-npm` or `check-failed` entries | Local package versions are not older than npm and registry lookup succeeded. |
+| `status:security` has no high, critical, or check-failed entries | The workspace has no high or critical npm audit findings at the time of the registry check. |
 | `smoke:published` succeeds | The currently published npm packages install and expose expected imports and bins. |
 | `verify:aws-live` succeeds without `AGENTDISPATCH_LIVE_DISPATCH=1` | AWS live preflight passed for the configured account/runtime. |
 | `verify:aws-live` succeeds with `AGENTDISPATCH_LIVE_DISPATCH=1` | Live AWS dispatch worked against a real AgentCore runtime. |
@@ -123,5 +126,6 @@ Keep these artifacts with the launch notes:
 - `agentdispatch-live-aws-report.json`, if live preflight was run
 - `agentdispatch-live-aws-dispatch-report.json`, if live dispatch was run
 - terminal output or CI links for `status:npm` and `smoke:published`
+- terminal output or CI links for `status:security`
 
 Do not commit account-specific live AWS reports if they contain private runtime names, account IDs, regions, or operational metadata that should stay private.

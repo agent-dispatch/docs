@@ -24,6 +24,20 @@ npm --prefix agentdispatch-docs run status:npm
 
 `status:npm` is not part of the default local E2E gate because it depends on npm registry availability.
 
+Use this separate networked command to audit high and critical npm vulnerabilities across the workspace:
+
+```bash
+npm --prefix agentdispatch-docs run status:security
+```
+
+Use `--strict` before release automation when high or critical findings should fail the run:
+
+```bash
+npm --prefix agentdispatch-docs run status:security -- --strict
+```
+
+`status:security` is not part of the default local E2E gate because it depends on npm registry availability.
+
 For automation or release notes, use JSON:
 
 ```bash
@@ -46,6 +60,7 @@ It does not run tests, builds, package smoke tests, public npm canaries, or live
 AGENTDISPATCH_VERIFY_INSTALL=1 npm --prefix agentdispatch-docs run verify:local-e2e
 AGENTDISPATCH_VERIFY_INSTALL=1 AGENTDISPATCH_LOCAL_E2E_REPORT=./agentdispatch-local-e2e-report.json npm --prefix agentdispatch-docs run verify:local-e2e
 npm --prefix agentdispatch-docs run status:npm
+npm --prefix agentdispatch-docs run status:security
 npm --prefix agentdispatch-docs run smoke:published
 ```
 
@@ -89,6 +104,10 @@ Gates
   AGENTDISPATCH_VERIFY_INSTALL=1 npm --prefix agentdispatch-docs run verify:local-e2e
 - published-canary: manual
   npm --prefix agentdispatch-docs run smoke:published
+- npm-version-drift: manual
+  npm --prefix agentdispatch-docs run status:npm
+- security-audit: manual
+  npm --prefix agentdispatch-docs run status:security
 - live-aws: missing
   AGENTDISPATCH_CONFIG=/absolute/path/agentdispatch.config.json AGENTDISPATCH_LIVE_REPORT=./agentdispatch-live-aws-report.json npm --prefix agentdispatch-docs run verify:aws-live
 

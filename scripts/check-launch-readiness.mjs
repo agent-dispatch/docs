@@ -154,7 +154,7 @@ await assertSyncedAsset(
 );
 
 const docsPackageJson = JSON.parse(await readFile(join(docsRoot, "package.json"), "utf8"));
-for (const script of ["demo:local", "demo:record", "verify:local-e2e", "verify:aws-live", "smoke:packages", "smoke:published", "status:release", "status:npm"]) {
+for (const script of ["demo:local", "demo:record", "verify:local-e2e", "verify:aws-live", "smoke:packages", "smoke:published", "status:release", "status:npm", "status:security"]) {
   if (!docsPackageJson.scripts?.[script]) {
     failures.push(`package.json: missing script ${script}`);
   }
@@ -202,6 +202,7 @@ mustInclude(docsReadme, "npm --prefix agentdispatch-docs run demo:local", "READM
 mustInclude(docsReadme, "npm --prefix agentdispatch-docs run demo:record", "README.md", "shows demo recording command");
 mustInclude(docsReadme, "npm --prefix agentdispatch-docs run status:release", "README.md", "shows release status command");
 mustInclude(docsReadme, "npm --prefix agentdispatch-docs run status:npm", "README.md", "shows npm status command");
+mustInclude(docsReadme, "npm --prefix agentdispatch-docs run status:security", "README.md", "shows security status command");
 
 const contributorMap = await readFile(join(docsRoot, "docs", "contributor-map.md"), "utf8");
 for (const expected of [
@@ -266,6 +267,7 @@ for (const expected of [
   "local-demo.report.json",
   "status:npm",
   "smoke:published",
+  "status:security",
   "AGENTDISPATCH_LIVE_DISPATCH=1",
   "Live AWS dispatch verified against a real AgentCore runtime",
   "Do not commit account-specific live AWS reports"
@@ -324,6 +326,7 @@ for (const expected of [
   "smoke:published",
   "status:release",
   "status:npm",
+  "status:security",
   "npm publish --provenance --access public",
   "AGENTDISPATCH_VERIFY_INSTALL=1 npm --prefix agentdispatch-docs run verify:local-e2e",
   "@agent-dispatch/core",
@@ -356,6 +359,7 @@ mustInclude(launchChecklist, "demo:local", "docs/repo-launch-checklist.md", "run
 mustInclude(launchChecklist, "demo:record", "docs/repo-launch-checklist.md", "records local demo");
 mustInclude(launchChecklist, "status:release", "docs/repo-launch-checklist.md", "runs release status");
 mustInclude(launchChecklist, "status:npm", "docs/repo-launch-checklist.md", "runs npm status");
+mustInclude(launchChecklist, "status:security", "docs/repo-launch-checklist.md", "runs security status");
 mustInclude(launchChecklist, "AGENTDISPATCH_LOCAL_E2E_REPORT", "docs/repo-launch-checklist.md", "captures local E2E report");
 mustInclude(launchChecklist, "npm run smoke:published", "docs/repo-launch-checklist.md", "runs published package smoke");
 mustInclude(launchChecklist, "AGENTDISPATCH_LIVE_REPORT", "docs/repo-launch-checklist.md", "captures live AWS report path");
@@ -364,6 +368,7 @@ const releaseStatus = await readFile(join(docsRoot, "docs", "release-status.md")
 for (const expected of [
   "status:release",
   "status:npm",
+  "status:security",
   "Retained local E2E report found",
   "AGENTDISPATCH_LOCAL_E2E_REPORT",
   "--json",
@@ -385,6 +390,19 @@ for (const expected of [
   "--strict"
 ]) {
   mustInclude(npmVersionDriftScript, expected, "scripts/check-npm-version-drift.mjs", `implements ${expected}`);
+}
+
+const securityAuditScript = await readFile(join(docsRoot, "scripts", "check-security-audit.mjs"), "utf8");
+for (const expected of [
+  "npm audit",
+  "--audit-level=high",
+  "vulnerable",
+  "critical",
+  "high",
+  "--json",
+  "--strict"
+]) {
+  mustInclude(securityAuditScript, expected, "scripts/check-security-audit.mjs", `implements ${expected}`);
 }
 
 const examples = await readFile(join(docsRoot, "docs", "examples.md"), "utf8");
