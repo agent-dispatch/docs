@@ -154,10 +154,20 @@ await assertSyncedAsset(
 );
 
 const docsPackageJson = JSON.parse(await readFile(join(docsRoot, "package.json"), "utf8"));
-for (const script of ["verify:local-e2e", "verify:aws-live", "smoke:packages", "smoke:published"]) {
+for (const script of ["demo:local", "verify:local-e2e", "verify:aws-live", "smoke:packages", "smoke:published"]) {
   if (!docsPackageJson.scripts?.[script]) {
     failures.push(`package.json: missing script ${script}`);
   }
+}
+
+const localDemoScript = await readFile(join(docsRoot, "scripts", "demo-local.sh"), "utf8");
+for (const expected of [
+  "agentdispatch doctor",
+  "MCP server",
+  "spawn_cloud_agent",
+  "AGENTDISPATCH_LIVE_DISPATCH=1"
+]) {
+  mustInclude(localDemoScript, expected, "scripts/demo-local.sh", `documents ${expected}`);
 }
 
 const docsReadme = await readFile(join(docsRoot, "README.md"), "utf8");
@@ -168,6 +178,7 @@ mustInclude(docsReadme, "./docs/lead-agent-prompt-kit.md", "README.md", "links l
 mustInclude(docsReadme, "./docs/release-runbook.md", "README.md", "links release runbook");
 mustInclude(docsReadme, "actions/workflows/local-e2e.yml/badge.svg", "README.md", "shows local E2E badge");
 mustInclude(docsReadme, "actions/workflows/live-aws-verification.yml/badge.svg", "README.md", "shows live AWS verification badge");
+mustInclude(docsReadme, "npm --prefix agentdispatch-docs run demo:local", "README.md", "shows executable local demo");
 
 const contributorMap = await readFile(join(docsRoot, "docs", "contributor-map.md"), "utf8");
 for (const expected of [
@@ -237,6 +248,7 @@ for (const expected of [
 const launchAnnouncementKit = await readFile(join(docsRoot, "docs", "launch-announcement-kit.md"), "utf8");
 mustInclude(launchAnnouncementKit, "./lead-agent-prompt-kit.md", "docs/launch-announcement-kit.md", "links lead agent prompt kit");
 mustInclude(launchAnnouncementKit, "./release-runbook.md", "docs/launch-announcement-kit.md", "links release runbook");
+mustInclude(launchAnnouncementKit, "demo:local", "docs/launch-announcement-kit.md", "references executable local demo");
 
 const releaseRunbook = await readFile(join(docsRoot, "docs", "release-runbook.md"), "utf8");
 for (const expected of [
@@ -254,6 +266,7 @@ for (const expected of [
 
 const localDemoTranscript = await readFile(join(docsRoot, "docs", "local-demo-transcript.md"), "utf8");
 mustInclude(localDemoTranscript, "./lead-agent-prompt-kit.md", "docs/local-demo-transcript.md", "links lead agent prompt kit");
+mustInclude(localDemoTranscript, "demo:local", "docs/local-demo-transcript.md", "references executable local demo");
 
 const packageConsumption = await readFile(join(docsRoot, "docs", "package-consumption.md"), "utf8");
 mustInclude(packageConsumption, "smoke:published", "docs/package-consumption.md", "documents published package smoke");
@@ -263,6 +276,7 @@ mustInclude(launchChecklist, "./verification-matrix.md", "docs/repo-launch-check
 mustInclude(launchChecklist, "./live-aws-verification.md", "docs/repo-launch-checklist.md", "links live AWS runbook");
 mustInclude(launchChecklist, "./lead-agent-prompt-kit.md", "docs/repo-launch-checklist.md", "links lead agent prompt kit");
 mustInclude(launchChecklist, "./release-runbook.md", "docs/repo-launch-checklist.md", "links release runbook");
+mustInclude(launchChecklist, "demo:local", "docs/repo-launch-checklist.md", "runs executable local demo");
 mustInclude(launchChecklist, "npm run smoke:published", "docs/repo-launch-checklist.md", "runs published package smoke");
 mustInclude(launchChecklist, "AGENTDISPATCH_LIVE_REPORT", "docs/repo-launch-checklist.md", "captures live AWS report path");
 

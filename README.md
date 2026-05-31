@@ -25,6 +25,16 @@ Documentation for AgentDispatch: the provider-neutral MCP control plane for spaw
 
 ## Mental model
 
+## Run The Local Demo
+
+From the multi-repo workspace:
+
+```bash
+npm --prefix agentdispatch-docs run demo:local
+```
+
+This creates a temporary config, runs local `agentdispatch doctor`, checks the MCP server, and prints the lead-agent handoff payload without touching live AWS state.
+
 AgentDispatch gives lead agents one stable way to hand off long-running work:
 
 ```mermaid

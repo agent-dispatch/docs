@@ -16,6 +16,7 @@
     "agent-orchestration"
   ],
   "scripts": {
+    "demo:local": "bash scripts/demo-local.sh",
     "lint:launch": "node scripts/check-launch-readiness.mjs",
     "lint:markdown": "markdownlint-cli2",
     "lint:links": "node scripts/check-local-links.mjs",

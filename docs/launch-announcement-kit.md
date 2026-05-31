@@ -156,6 +156,8 @@ In a real agent session, the lead agent calls spawn_cloud_agent with the task in
 Live AWS dispatch is opt-in because it depends on account credentials, quotas, runtime ARNs, and possible cost.
 ```
 
+For a deterministic terminal path before recording, run `npm --prefix agentdispatch-docs run demo:local` from the multi-repo workspace.
+
 For copy-paste prompts that work across Claude Code, Codex, OpenClaw, Hermes, and any MCP-capable agent, use the [lead agent prompt kit](./lead-agent-prompt-kit.md).
 
 ## What Not To Claim

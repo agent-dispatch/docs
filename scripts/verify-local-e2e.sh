@@ -145,6 +145,7 @@ for package in "${packages[@]}"; do
 done
 
 run_step npm --prefix "$workspace_root/agentdispatch-docs" run smoke:packages
+run_step npm --prefix "$workspace_root/agentdispatch-docs" run demo:local
 
 tmpdir="$(mktemp -d)"
 cleanup_dirs+=("$tmpdir")

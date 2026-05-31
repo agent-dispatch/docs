@@ -4,6 +4,14 @@ This transcript is the launch-demo path that works without live AWS credentials.
 
 ## 90-Second Flow
 
+Run the executable local demo from the multi-repo workspace:
+
+```bash
+npm --prefix agentdispatch-docs run demo:local
+```
+
+Or run the commands manually:
+
 ```bash
 npm install -g @agent-dispatch/cli
 
