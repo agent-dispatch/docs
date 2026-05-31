@@ -12,45 +12,53 @@ const packages = [
   {
     repo: "agentdispatch-core",
     packageName: "@agent-dispatch/core",
-    purpose: ["Provider-neutral", "Adapter contract", "RuntimeService"]
+    purpose: ["Provider-neutral", "Adapter contract", "RuntimeService"],
+    publicPackage: true
   },
   {
     repo: "agentdispatch-mcp-server",
     packageName: "@agent-dispatch/mcp-server",
     purpose: ["spawn_cloud_agent", "check_cloud_agent_runtime", "get_task_result"],
-    mcpSnippet: true
+    mcpSnippet: true,
+    publicPackage: true
   },
   {
     repo: "agentdispatch-sdk-js",
     packageName: "@agent-dispatch/sdk",
     purpose: ["AgentDispatchStdioClient", "spawnCloudAgent", "sendCloudAgentA2AMessage"],
-    mcpSnippet: true
+    mcpSnippet: true,
+    publicPackage: true
   },
   {
     repo: "agentdispatch-cli",
     packageName: "@agent-dispatch/cli",
     purpose: ["agentdispatch init", "agentdispatch doctor", "spawn_cloud_agent"],
-    mcpSnippet: true
+    mcpSnippet: true,
+    publicPackage: true
   },
   {
     repo: "agentdispatch-store-sqlite",
     packageName: "@agent-dispatch/store-sqlite",
-    purpose: ["SQLite", "durable", "artifacts"]
+    purpose: ["SQLite", "durable", "artifacts"],
+    publicPackage: true
   },
   {
     repo: "agentdispatch-adapter-aws-agentcore",
     packageName: "@agent-dispatch/adapter-aws-agentcore",
-    purpose: ["AWS AgentCore", "session", "runtime"]
+    purpose: ["AWS AgentCore", "session", "runtime"],
+    publicPackage: true
   },
   {
     repo: "agentdispatch-worker-agentcore",
     packageName: "@agent-dispatch/worker-agentcore",
-    purpose: ["AgentCore worker", "A2A", "message/send"]
+    purpose: ["AgentCore worker", "A2A", "message/send"],
+    publicPackage: true
   },
   {
     repo: "agentdispatch-adapter-template",
     packageName: "@agent-dispatch/adapter-template",
-    purpose: ["GCP", "Azure", "Kubernetes"]
+    purpose: ["GCP", "Azure", "Kubernetes"],
+    publicPackage: false
   }
 ];
 
@@ -60,6 +68,10 @@ for (const pkg of packages) {
   const readmePath = join(workspaceRoot, pkg.repo, "README.md");
   const readme = await readFile(readmePath, "utf8");
   const label = `${pkg.repo}/README.md`;
+  const packageJsonLabel = `${pkg.repo}/package.json`;
+  const packageJson = JSON.parse(await readFile(join(workspaceRoot, pkg.repo, "package.json"), "utf8"));
+  const ciWorkflow = await readFile(join(workspaceRoot, pkg.repo, ".github", "workflows", "ci.yml"), "utf8");
+  const releaseDoc = await readFile(join(workspaceRoot, pkg.repo, "docs", "release.md"), "utf8");
 
   mustInclude(readme, `# ${pkg.packageName}`, label, "starts with package name");
   mustInclude(readme, "AgentDispatch", label, "names the project");
@@ -67,6 +79,7 @@ for (const pkg of packages) {
   mustInclude(readme, "npm run typecheck", label, "documents typecheck command");
   mustInclude(readme, "npm test", label, "documents test command");
   mustInclude(readme, "npm run build", label, "documents build command");
+  mustInclude(readme, "docs/release.md", label, "links release workflow");
 
   if (!/MCP|adapter|cloud|AgentCore|provider-neutral/i.test(readme)) {
     failures.push(`${label}: does not explain how the package fits the AgentDispatch architecture`);
@@ -82,6 +95,45 @@ for (const pkg of packages) {
     }
     mustInclude(readme, '"-y"', label, "uses non-interactive npx in MCP config");
     mustInclude(readme, '"@agent-dispatch/mcp-server"', label, "uses package name in MCP config");
+  }
+
+  mustEqual(packageJson.name, pkg.packageName, packageJsonLabel, "uses expected package name");
+  mustEqual(packageJson.type, "module", packageJsonLabel, "uses ESM");
+  mustEqual(packageJson.engines?.node, ">=20.19", packageJsonLabel, "requires supported Node version");
+  mustIncludeArray(packageJson.files, "dist", packageJsonLabel, "publishes dist");
+  mustIncludeArray(packageJson.files, "README.md", packageJsonLabel, "publishes README");
+  mustIncludeArray(packageJson.files, "LICENSE", packageJsonLabel, "publishes LICENSE");
+  mustInclude(Object.keys(packageJson.scripts ?? {}).join("\n"), "typecheck", packageJsonLabel, "has typecheck script");
+  mustInclude(Object.keys(packageJson.scripts ?? {}).join("\n"), "test", packageJsonLabel, "has test script");
+  mustInclude(Object.keys(packageJson.scripts ?? {}).join("\n"), "build", packageJsonLabel, "has build script");
+
+  for (const expected of ["actions/setup-node@v4", "npm ci", "npm run typecheck", "npm run build"]) {
+    mustInclude(ciWorkflow, expected, `${pkg.repo}/.github/workflows/ci.yml`, `CI runs ${expected}`);
+  }
+  if (!/npm test(?: --if-present)?/.test(ciWorkflow)) {
+    failures.push(`${pkg.repo}/.github/workflows/ci.yml: CI must run npm test`);
+  }
+
+  mustInclude(releaseDoc, "Release", `${pkg.repo}/docs/release.md`, "documents release policy");
+  if (pkg.publicPackage) {
+    mustEqual(packageJson.publishConfig?.access, "public", packageJsonLabel, "publishes publicly");
+    const publishWorkflow = await readFile(join(workspaceRoot, pkg.repo, ".github", "workflows", "publish.yml"), "utf8");
+    for (const expected of [
+      "workflow_dispatch",
+      "id-token: write",
+      "registry-url: https://registry.npmjs.org",
+      "npm ci",
+      "npm run typecheck",
+      "npm test",
+      "npm run build",
+      "npm publish --provenance --access public"
+    ]) {
+      mustInclude(publishWorkflow, expected, `${pkg.repo}/.github/workflows/publish.yml`, `publish workflow includes ${expected}`);
+    }
+    mustInclude(releaseDoc, "Trusted Publisher", `${pkg.repo}/docs/release.md`, "documents Trusted Publisher");
+  } else {
+    mustEqual(packageJson.private, true, packageJsonLabel, "keeps template private");
+    mustInclude(releaseDoc, "Do not publish", `${pkg.repo}/docs/release.md`, "documents no-publish policy");
   }
 }
 
@@ -99,6 +151,7 @@ mustInclude(docsReadme, "./docs/live-aws-verification.md", "README.md", "links l
 mustInclude(docsReadme, "./docs/verification-matrix.md", "README.md", "links verification matrix");
 mustInclude(docsReadme, "./docs/contributor-map.md", "README.md", "links contributor map");
 mustInclude(docsReadme, "./docs/lead-agent-prompt-kit.md", "README.md", "links lead agent prompt kit");
+mustInclude(docsReadme, "./docs/release-runbook.md", "README.md", "links release runbook");
 mustInclude(docsReadme, "actions/workflows/local-e2e.yml/badge.svg", "README.md", "shows local E2E badge");
 mustInclude(docsReadme, "actions/workflows/live-aws-verification.yml/badge.svg", "README.md", "shows live AWS verification badge");
 
@@ -168,6 +221,20 @@ for (const expected of [
 
 const launchAnnouncementKit = await readFile(join(docsRoot, "docs", "launch-announcement-kit.md"), "utf8");
 mustInclude(launchAnnouncementKit, "./lead-agent-prompt-kit.md", "docs/launch-announcement-kit.md", "links lead agent prompt kit");
+mustInclude(launchAnnouncementKit, "./release-runbook.md", "docs/launch-announcement-kit.md", "links release runbook");
+
+const releaseRunbook = await readFile(join(docsRoot, "docs", "release-runbook.md"), "utf8");
+for (const expected of [
+  "Release Order",
+  "Trusted Publisher",
+  "npm publish --provenance --access public",
+  "AGENTDISPATCH_VERIFY_INSTALL=1 npm --prefix agentdispatch-docs run verify:local-e2e",
+  "@agent-dispatch/core",
+  "@agent-dispatch/cli",
+  "AGENTDISPATCH_LIVE_DISPATCH=1"
+]) {
+  mustInclude(releaseRunbook, expected, "docs/release-runbook.md", `documents ${expected}`);
+}
 
 const localDemoTranscript = await readFile(join(docsRoot, "docs", "local-demo-transcript.md"), "utf8");
 mustInclude(localDemoTranscript, "./lead-agent-prompt-kit.md", "docs/local-demo-transcript.md", "links lead agent prompt kit");
@@ -176,6 +243,7 @@ const launchChecklist = await readFile(join(docsRoot, "docs", "repo-launch-check
 mustInclude(launchChecklist, "./verification-matrix.md", "docs/repo-launch-checklist.md", "links verification matrix");
 mustInclude(launchChecklist, "./live-aws-verification.md", "docs/repo-launch-checklist.md", "links live AWS runbook");
 mustInclude(launchChecklist, "./lead-agent-prompt-kit.md", "docs/repo-launch-checklist.md", "links lead agent prompt kit");
+mustInclude(launchChecklist, "./release-runbook.md", "docs/repo-launch-checklist.md", "links release runbook");
 mustInclude(launchChecklist, "AGENTDISPATCH_LIVE_REPORT", "docs/repo-launch-checklist.md", "captures live AWS report path");
 
 if (failures.length > 0) {
@@ -187,6 +255,18 @@ console.log(`Checked launch readiness for ${packages.length} package READMEs.`);
 
 function mustInclude(text, expected, label, reason) {
   if (!text.includes(expected)) {
+    failures.push(`${label}: missing ${JSON.stringify(expected)} (${reason})`);
+  }
+}
+
+function mustEqual(actual, expected, label, reason) {
+  if (actual !== expected) {
+    failures.push(`${label}: expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)} (${reason})`);
+  }
+}
+
+function mustIncludeArray(value, expected, label, reason) {
+  if (!Array.isArray(value) || !value.includes(expected)) {
     failures.push(`${label}: missing ${JSON.stringify(expected)} (${reason})`);
   }
 }

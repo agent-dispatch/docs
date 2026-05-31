@@ -86,6 +86,7 @@ Avoid overclaiming autonomy or production maturity. The most credible message is
 ## Verification Before Launch
 
 Use the [verification matrix](./verification-matrix.md) to keep local E2E, live preflight, and live dispatch claims separate.
+Use the [release runbook](./release-runbook.md) before publishing npm packages so release order, Trusted Publisher, and provenance stay explicit.
 
 From the local multi-repo workspace, run the single production gate:
 

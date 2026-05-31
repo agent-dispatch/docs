@@ -168,6 +168,7 @@ Avoid these claims unless live evidence exists:
 - Do not claim autonomous production maturity; the credible claim is a tested local control plane, stable MCP surface, and adapter boundary.
 - Use [Verification matrix](./verification-matrix.md) to keep local and live-cloud claims separate.
 - Use [Live AWS verification](./live-aws-verification.md) and keep its JSON evidence report before making any public live-cloud claim.
+- Use the [Release runbook](./release-runbook.md) before announcing a new npm release or provenance claim.
 
 ## Links
 
@@ -176,5 +177,6 @@ Avoid these claims unless live evidence exists:
 - MCP server: <https://github.com/agent-dispatch/mcp-server>
 - CLI: <https://github.com/agent-dispatch/cli>
 - Docs: <https://github.com/agent-dispatch/docs>
+- Release runbook: <https://github.com/agent-dispatch/docs/blob/main/docs/release-runbook.md>
 - Local demo transcript: <https://github.com/agent-dispatch/docs/blob/main/docs/local-demo-transcript.md>
 - Lead agent prompt kit: <https://github.com/agent-dispatch/docs/blob/main/docs/lead-agent-prompt-kit.md>

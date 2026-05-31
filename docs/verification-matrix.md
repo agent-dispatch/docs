@@ -28,6 +28,7 @@ That gate verifies:
 | CLI bootstrap | Runs the built CLI `init` command and validates `doctor --json` returns `ok: true`. |
 | MCP startup | Runs the built MCP server with `--check` and validates the JSON report returns `ok: true`. |
 | Launch assets | Checks GitHub profile artwork, social preview dimensions, website validation, profile validation, and docs launch checks. |
+| Release readiness | Checks package metadata, CI workflows, provenance publish workflows, and per-package release docs. |
 
 ## Live Cloud Proof
 
