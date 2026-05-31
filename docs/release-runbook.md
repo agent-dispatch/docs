@@ -109,8 +109,9 @@ Each public package repo must have:
 - `npm run typecheck`
 - `npm test`
 - `npm run build`
-- `npm publish --provenance --access public` in the publish workflow
+- `npm publish` in the publish workflow, with `publishConfig.access = "public"`
 - `permissions.id-token: write` in the publish workflow for npm Trusted Publisher
+- `package-manager-cache: false` in the publish workflow release setup
 
 The adapter template must keep CI and `docs/release.md`, but it must remain private.
 
@@ -128,7 +129,7 @@ For each public package, configure npm Trusted Publisher against its repository 
 | `@agent-dispatch/mcp-server` | `agent-dispatch/mcp-server` | `.github/workflows/publish.yml` |
 | `@agent-dispatch/cli` | `agent-dispatch/cli` | `.github/workflows/publish.yml` |
 
-Do not publish from a developer laptop for public releases. Use the `Publish` GitHub Actions workflow so the npm package has provenance.
+Do not publish from a developer laptop for public releases. Use the `Publish` GitHub Actions workflow so npm Trusted Publisher can generate provenance from the workflow identity.
 
 ## Per-Package Publish
 

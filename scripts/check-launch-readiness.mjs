@@ -126,11 +126,12 @@ for (const pkg of packages) {
       "workflow_dispatch",
       "id-token: write",
       "registry-url: https://registry.npmjs.org",
+      "package-manager-cache: false",
       "npm ci",
       "npm run typecheck",
       "npm test",
       "npm run build",
-      "npm publish --provenance --access public"
+      "npm publish"
     ]) {
       mustInclude(publishWorkflow, expected, `${pkg.repo}/.github/workflows/publish.yml`, `publish workflow includes ${expected}`);
     }
@@ -436,7 +437,8 @@ for (const expected of [
   "status:publish",
   "status:security",
   "npm publish --dry-run --json",
-  "npm publish --provenance --access public",
+  "npm publish",
+  "package-manager-cache: false",
   "AGENTDISPATCH_VERIFY_INSTALL=1 npm --prefix agentdispatch-docs run verify:local-e2e",
   "@agent-dispatch/core",
   "@agent-dispatch/cli",
