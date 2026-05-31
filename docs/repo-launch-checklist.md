@@ -54,6 +54,7 @@ Use this checklist before a public push, announcement, or launch post. The goal 
 
 ## Contributor Hooks
 
+- Use the [Contributor issue bank](./contributor-issue-bank.md) to seed launch-day issues with repo, labels, acceptance criteria, and verification commands.
 - Add "good first adapter" issues for:
   - local child-process adapter
   - Kubernetes Job adapter

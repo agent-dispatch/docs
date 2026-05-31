@@ -16,6 +16,7 @@ Documentation for AgentDispatch: the provider-neutral MCP control plane for spaw
 - [Package consumption](./docs/package-consumption.md) — how the separate repos and NPM packages work together.
 - [Lead agent prompt kit](./docs/lead-agent-prompt-kit.md) — copy-paste prompts for Claude Code, Codex, OpenClaw, Hermes, and MCP-capable lead agents.
 - [Contributor map](./docs/contributor-map.md) — where to make changes and how to choose a first contribution path.
+- [Contributor issue bank](./docs/contributor-issue-bank.md) — ready-to-open adapter, worker, and architecture issues for launch-day contributor conversion.
 - [Local demo transcript](./docs/local-demo-transcript.md) — short copyable terminal path for a launch demo without live AWS credentials.
 - [Verification matrix](./docs/verification-matrix.md) — what local E2E proves, what live AWS proves, and what not to claim.
 - [Live AWS verification](./docs/live-aws-verification.md) — opt-in AgentCore preflight and real-dispatch proof path.

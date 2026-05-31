@@ -21,6 +21,7 @@ Use this map when you want to help but do not yet know which AgentDispatch repo 
 - [New provider adapter](https://github.com/agent-dispatch/.github/issues/new?template=good_first_adapter.yml)
 - [Worker framework integration](https://github.com/agent-dispatch/.github/issues/new?template=good_first_worker.yml)
 - [Architecture improvement](https://github.com/agent-dispatch/.github/issues/new?template=architecture_request.yml)
+- [Contributor issue bank](./contributor-issue-bank.md) for ready-to-open adapter, worker, and architecture issues with acceptance criteria.
 
 ## Architecture Rules
 

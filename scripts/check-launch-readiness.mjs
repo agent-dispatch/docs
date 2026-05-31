@@ -177,6 +177,7 @@ const docsReadme = await readFile(join(docsRoot, "README.md"), "utf8");
 mustInclude(docsReadme, "./docs/live-aws-verification.md", "README.md", "links live AWS verification runbook");
 mustInclude(docsReadme, "./docs/verification-matrix.md", "README.md", "links verification matrix");
 mustInclude(docsReadme, "./docs/contributor-map.md", "README.md", "links contributor map");
+mustInclude(docsReadme, "./docs/contributor-issue-bank.md", "README.md", "links contributor issue bank");
 mustInclude(docsReadme, "./docs/lead-agent-prompt-kit.md", "README.md", "links lead agent prompt kit");
 mustInclude(docsReadme, "./docs/release-runbook.md", "README.md", "links release runbook");
 mustInclude(docsReadme, "./docs/release-status.md", "README.md", "links release status");
@@ -190,10 +191,28 @@ for (const expected of [
   "good_first_adapter.yml",
   "good_first_worker.yml",
   "architecture_request.yml",
+  "./contributor-issue-bank.md",
   "provider + capability + task_type + target.mode",
   "verify:local-e2e"
 ]) {
   mustInclude(contributorMap, expected, "docs/contributor-map.md", `documents ${expected}`);
+}
+
+const contributorIssueBank = await readFile(join(docsRoot, "docs", "contributor-issue-bank.md"), "utf8");
+for (const expected of [
+  "local child-process adapter",
+  "Kubernetes Job adapter",
+  "GCP Cloud Run Jobs adapter",
+  "Azure Container Apps Jobs adapter",
+  "command-backed worker",
+  "LangGraph worker",
+  "OpenAI Agents worker",
+  "provider-neutral artifact browsing",
+  "provider-neutral live preflight evidence",
+  "AGENTDISPATCH_VERIFY_INSTALL=1 npm --prefix agentdispatch-docs run verify:local-e2e",
+  "AGENTDISPATCH_LIVE_DISPATCH=1"
+]) {
+  mustInclude(contributorIssueBank, expected, "docs/contributor-issue-bank.md", `documents ${expected}`);
 }
 
 const liveWorkflow = await readFile(join(docsRoot, ".github", "workflows", "live-aws-verification.yml"), "utf8");
@@ -253,6 +272,7 @@ for (const expected of [
 
 const launchAnnouncementKit = await readFile(join(docsRoot, "docs", "launch-announcement-kit.md"), "utf8");
 mustInclude(launchAnnouncementKit, "./lead-agent-prompt-kit.md", "docs/launch-announcement-kit.md", "links lead agent prompt kit");
+mustInclude(launchAnnouncementKit, "./contributor-issue-bank.md", "docs/launch-announcement-kit.md", "links contributor issue bank");
 mustInclude(launchAnnouncementKit, "./release-runbook.md", "docs/launch-announcement-kit.md", "links release runbook");
 mustInclude(launchAnnouncementKit, "demo:local", "docs/launch-announcement-kit.md", "references executable local demo");
 mustInclude(launchAnnouncementKit, "status:release", "docs/launch-announcement-kit.md", "references release status");
@@ -281,6 +301,7 @@ mustInclude(packageConsumption, "smoke:published", "docs/package-consumption.md"
 
 const launchChecklist = await readFile(join(docsRoot, "docs", "repo-launch-checklist.md"), "utf8");
 mustInclude(launchChecklist, "./verification-matrix.md", "docs/repo-launch-checklist.md", "links verification matrix");
+mustInclude(launchChecklist, "./contributor-issue-bank.md", "docs/repo-launch-checklist.md", "links contributor issue bank");
 mustInclude(launchChecklist, "./live-aws-verification.md", "docs/repo-launch-checklist.md", "links live AWS runbook");
 mustInclude(launchChecklist, "./lead-agent-prompt-kit.md", "docs/repo-launch-checklist.md", "links lead agent prompt kit");
 mustInclude(launchChecklist, "./release-runbook.md", "docs/repo-launch-checklist.md", "links release runbook");

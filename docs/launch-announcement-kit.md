@@ -162,6 +162,8 @@ Before publishing the post, run `npm --prefix agentdispatch-docs run status:rele
 
 For copy-paste prompts that work across Claude Code, Codex, OpenClaw, Hermes, and any MCP-capable agent, use the [lead agent prompt kit](./lead-agent-prompt-kit.md).
 
+For contributor conversion after the announcement, seed the first issues from the [contributor issue bank](./contributor-issue-bank.md).
+
 ## What Not To Claim
 
 Avoid these claims unless live evidence exists:
