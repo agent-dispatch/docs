@@ -94,6 +94,18 @@ Successful output includes the initial task handle, streamed logs if the runtime
 
 For launch evidence, keep the generated report with the release checklist. The report claim should read `Live AWS dispatch verified against a real AgentCore runtime.` before making a public live-dispatch claim.
 
+## GitHub Actions Evidence
+
+The docs repo includes a manual `Live AWS Verification` workflow. Configure these repository secrets before running it:
+
+- `AGENTDISPATCH_CONFIG_JSON`: the full AgentDispatch config JSON
+- `AGENTDISPATCH_AWS_REGION`: AWS region for credential configuration
+- `AWS_ROLE_ARN`: optional OIDC role to assume
+- `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_SESSION_TOKEN`: optional static credentials when OIDC is not used
+- `AGENTDISPATCH_LIVE_INSTRUCTION`: optional custom smoke instruction
+
+Run the workflow manually, choose the runtime profile, and set `live_dispatch=true` only when you want to submit a real cloud task. Successful runs upload `agentdispatch-live-aws-report.json` as the workflow artifact.
+
 ## Troubleshooting
 
 - `runtime was not found`: set `AGENTDISPATCH_RUNTIME` to a configured runtime profile or update `defaults.runtime`.

@@ -1,0 +1,77 @@
+name: Live AWS Verification
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+on:
+  workflow_dispatch:
+    inputs:
+      runtime:
+        description: "Runtime profile name from the AgentDispatch config"
+        required: true
+        default: "research-agent"
+      live_dispatch:
+        description: "Submit a real cloud task after live preflight passes"
+        required: true
+        default: "false"
+        type: choice
+        options:
+          - "false"
+          - "true"
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  live-aws-verification:
+    runs-on: ubuntu-latest
+    env:
+      AGENTDISPATCH_CONFIG_JSON: ${{ secrets.AGENTDISPATCH_CONFIG_JSON }}
+      AGENTDISPATCH_LIVE_INSTRUCTION: ${{ secrets.AGENTDISPATCH_LIVE_INSTRUCTION }}
+      AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
+      AWS_REGION: ${{ secrets.AGENTDISPATCH_AWS_REGION }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Configure AWS credentials from OIDC
+        if: ${{ env.AWS_ROLE_ARN != '' }}
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: ${{ env.AWS_ROLE_ARN }}
+
+      - name: Validate required live verification inputs
+        run: |
+          test -n "$AGENTDISPATCH_CONFIG_JSON"
+          test -n "$AWS_REGION"
+
+      - name: Write AgentDispatch config
+        run: |
+          printf '%s\n' "$AGENTDISPATCH_CONFIG_JSON" > agentdispatch.config.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run live AWS verification
+        run: npm run verify:aws-live
+        env:
+          AGENTDISPATCH_CONFIG: ${{ github.workspace }}/agentdispatch.config.json
+          AGENTDISPATCH_RUNTIME: ${{ inputs.runtime }}
+          AGENTDISPATCH_LIVE_DISPATCH: ${{ inputs.live_dispatch == 'true' && '1' || '0' }}
+          AGENTDISPATCH_LIVE_REPORT: ${{ github.workspace }}/agentdispatch-live-aws-report.json
+
+      - name: Upload live AWS verification report
+        uses: actions/upload-artifact@v4
+        with:
+          name: agentdispatch-live-aws-report
+          path: agentdispatch-live-aws-report.json
+          if-no-files-found: error

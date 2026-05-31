@@ -137,6 +137,8 @@ Live AWS dispatch is deliberately separate from the local gate because it depend
 
 Use [Live AWS verification](./live-aws-verification.md) as the authoritative runbook for required AWS inputs, what preflight proves, what real dispatch proves, how to write the JSON evidence report, and how to troubleshoot failed live checks.
 
+If using GitHub Actions instead of a local terminal, run the docs repo `Live AWS Verification` workflow and download the uploaded `agentdispatch-live-aws-report.json` artifact.
+
 ## Success Criteria
 
 - A visitor can explain the project after reading the first screen.

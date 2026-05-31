@@ -52,6 +52,8 @@ The generated dispatch report must contain this claim before a public live-cloud
 Live AWS dispatch verified against a real AgentCore runtime.
 ```
 
+Maintainers can also run the docs repo `Live AWS Verification` GitHub Actions workflow. It uses configured repository secrets, runs `verify:aws-live`, and uploads `agentdispatch-live-aws-report.json` as the release evidence artifact.
+
 ## Claim Rules
 
 - It is accurate to say the local multi-repo package graph, CLI, MCP server, docs, website, and org assets pass the local E2E gate after `verify:local-e2e` succeeds.

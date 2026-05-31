@@ -98,12 +98,23 @@ const docsReadme = await readFile(join(docsRoot, "README.md"), "utf8");
 mustInclude(docsReadme, "./docs/live-aws-verification.md", "README.md", "links live AWS verification runbook");
 mustInclude(docsReadme, "./docs/verification-matrix.md", "README.md", "links verification matrix");
 
+const liveWorkflow = await readFile(join(docsRoot, ".github", "workflows", "live-aws-verification.yml"), "utf8");
+for (const expected of [
+  "Live AWS Verification",
+  "AGENTDISPATCH_CONFIG_JSON",
+  "AGENTDISPATCH_LIVE_REPORT",
+  "actions/upload-artifact@v4"
+]) {
+  mustInclude(liveWorkflow, expected, ".github/workflows/live-aws-verification.yml", `configures ${expected}`);
+}
+
 const verificationMatrix = await readFile(join(docsRoot, "docs", "verification-matrix.md"), "utf8");
 for (const expected of [
   "verify:local-e2e",
   "verify:aws-live",
   "AGENTDISPATCH_LIVE_DISPATCH=1",
-  "Do not use local E2E evidence as proof that live AWS dispatch works"
+  "Do not use local E2E evidence as proof that live AWS dispatch works",
+  "Live AWS Verification"
 ]) {
   mustInclude(verificationMatrix, expected, "docs/verification-matrix.md", `documents ${expected}`);
 }
@@ -116,7 +127,8 @@ for (const expected of [
   "Launch Claim Rule",
   "sample placeholder",
   "AGENTDISPATCH_LIVE_REPORT",
-  "agentdispatch-live-aws-report.json"
+  "agentdispatch-live-aws-report.json",
+  "GitHub Actions Evidence"
 ]) {
   mustInclude(liveAwsVerification, expected, "docs/live-aws-verification.md", `documents ${expected}`);
 }
