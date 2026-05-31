@@ -26,6 +26,14 @@ AGENTDISPATCH_VERIFY_INSTALL=1 npm --prefix agentdispatch-docs run verify:local-
 
 This proves package installs, tests, typechecks, builds, package tarball consumption, CLI bootstrap, MCP server startup, docs validation, profile assets, and website validation against the current workspace.
 
+Then record the release status summary:
+
+```bash
+npm --prefix agentdispatch-docs run status:release
+```
+
+This reports repo cleanliness, commits ahead of `origin/main`, launch gate commands, and live AWS evidence state before the announcement.
+
 ## Required Published-Install Gate
 
 After the package line is published, run the registry canary:

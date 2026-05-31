@@ -16,6 +16,14 @@ Run from the parent multi-repo workspace:
 AGENTDISPATCH_VERIFY_INSTALL=1 npm --prefix agentdispatch-docs run verify:local-e2e
 ```
 
+For a quick release dashboard before or after the full gate, run:
+
+```bash
+npm --prefix agentdispatch-docs run status:release
+```
+
+That status command reports local repo cleanliness, commits ahead of `origin/main`, launch gate commands, and whether a live AWS verification report exists. It does not replace `verify:local-e2e`, `smoke:published`, or `verify:aws-live`.
+
 That gate verifies:
 
 | Surface | Evidence |
@@ -30,6 +38,7 @@ That gate verifies:
 | MCP startup | Runs the built MCP server with `--check` and validates the JSON report returns `ok: true`. |
 | Launch assets | Checks GitHub profile artwork, social preview dimensions, website validation, profile validation, and docs launch checks. |
 | Release readiness | Checks package metadata, CI workflows, provenance publish workflows, and per-package release docs. |
+| Release status | `status:release` summarizes repo cleanliness, unpushed commits, launch gates, and live AWS evidence state. |
 
 ## Live Cloud Proof
 

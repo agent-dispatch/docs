@@ -146,6 +146,7 @@ done
 
 run_step npm --prefix "$workspace_root/agentdispatch-docs" run smoke:packages
 run_step npm --prefix "$workspace_root/agentdispatch-docs" run demo:local
+run_step npm --prefix "$workspace_root/agentdispatch-docs" run status:release
 
 tmpdir="$(mktemp -d)"
 cleanup_dirs+=("$tmpdir")

@@ -20,6 +20,7 @@ Documentation for AgentDispatch: the provider-neutral MCP control plane for spaw
 - [Verification matrix](./docs/verification-matrix.md) — what local E2E proves, what live AWS proves, and what not to claim.
 - [Live AWS verification](./docs/live-aws-verification.md) — opt-in AgentCore preflight and real-dispatch proof path.
 - [Release runbook](./docs/release-runbook.md) — release order, npm Trusted Publisher setup, provenance, and package publish gates.
+- [Release status](./docs/release-status.md) — one local command for repo cleanliness, unpushed commits, launch gates, and live AWS evidence state.
 - [Launch announcement kit](./docs/launch-announcement-kit.md) — copy for GitHub, X, LinkedIn, Hacker News, Reddit, and demo narration.
 - [Repo launch checklist](./docs/repo-launch-checklist.md) — GitHub, npm, docs, demo, and social-readiness checklist for a high-signal public launch.
 
@@ -34,6 +35,14 @@ npm --prefix agentdispatch-docs run demo:local
 ```
 
 This creates a temporary config, runs local `agentdispatch doctor`, checks the MCP server, and prints the lead-agent handoff payload without touching live AWS state.
+
+Before a public push, release, or announcement, run the release status summary:
+
+```bash
+npm --prefix agentdispatch-docs run status:release
+```
+
+It reports repo cleanliness, commits ahead of `origin/main`, local launch gates, and whether a live AWS evidence report exists.
 
 AgentDispatch gives lead agents one stable way to hand off long-running work:
 

@@ -108,10 +108,13 @@ npm run build
 Run from docs:
 
 ```bash
+npm run status:release
 npm test
 npm run smoke:packages
 npm run smoke:published
 ```
+
+Use [Release status](./release-status.md) to record repo cleanliness, commits ahead of `origin/main`, launch gate commands, and the current live AWS evidence boundary before posting.
 
 Run from website:
 

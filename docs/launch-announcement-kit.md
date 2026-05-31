@@ -158,6 +158,8 @@ Live AWS dispatch is opt-in because it depends on account credentials, quotas, r
 
 For a deterministic terminal path before recording, run `npm --prefix agentdispatch-docs run demo:local` from the multi-repo workspace.
 
+Before publishing the post, run `npm --prefix agentdispatch-docs run status:release` so the launch claim matches the local repo state and live AWS evidence boundary.
+
 For copy-paste prompts that work across Claude Code, Codex, OpenClaw, Hermes, and any MCP-capable agent, use the [lead agent prompt kit](./lead-agent-prompt-kit.md).
 
 ## What Not To Claim
