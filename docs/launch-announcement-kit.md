@@ -158,6 +158,8 @@ Live AWS dispatch is opt-in because it depends on account credentials, quotas, r
 
 For a deterministic terminal path before recording, run `npm --prefix agentdispatch-docs run demo:local` from the multi-repo workspace.
 
+To retain the demo transcript and report, run `npm --prefix agentdispatch-docs run demo:record` and keep the generated artifacts with the launch notes.
+
 For a single menu of no-cloud, npm, prompt-kit, live preflight, and live dispatch demo paths, use the [examples index](./examples.md).
 
 Before publishing the post, use the [launch evidence](./launch-evidence.md) workflow to retain the local E2E report, release status JSON, npm evidence, and any live AWS report. At minimum, run `npm --prefix agentdispatch-docs run status:release` so the launch claim matches the local repo state and live AWS evidence boundary.

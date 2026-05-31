@@ -24,6 +24,23 @@ The local evidence report proves the current workspace passed package installs, 
 
 It does not prove live AWS AgentCore preflight, live AWS AgentCore dispatch, or that unpublished local versions are already available on npm.
 
+## Demo Recording Evidence
+
+For no-cloud demo narration or launch posts, record the local demo:
+
+```bash
+AGENTDISPATCH_DEMO_RECORD_DIR=./agentdispatch-local-demo-recording \
+npm --prefix agentdispatch-docs run demo:record
+```
+
+That writes:
+
+- `local-demo.transcript.txt` with temporary paths sanitized
+- `local-demo.raw.txt` with exact command output
+- `local-demo.report.json` with the demo claim boundary and artifact paths
+
+Use the transcript for recording a short terminal demo or for PR review. Do not use it as proof of live AWS dispatch.
+
 ## Release Status Evidence
 
 After the local report exists, run:

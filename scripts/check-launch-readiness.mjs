@@ -154,7 +154,7 @@ await assertSyncedAsset(
 );
 
 const docsPackageJson = JSON.parse(await readFile(join(docsRoot, "package.json"), "utf8"));
-for (const script of ["demo:local", "verify:local-e2e", "verify:aws-live", "smoke:packages", "smoke:published", "status:release", "status:npm"]) {
+for (const script of ["demo:local", "demo:record", "verify:local-e2e", "verify:aws-live", "smoke:packages", "smoke:published", "status:release", "status:npm"]) {
   if (!docsPackageJson.scripts?.[script]) {
     failures.push(`package.json: missing script ${script}`);
   }
@@ -168,6 +168,17 @@ for (const expected of [
   "AGENTDISPATCH_LIVE_DISPATCH=1"
 ]) {
   mustInclude(localDemoScript, expected, "scripts/demo-local.sh", `documents ${expected}`);
+}
+
+const localDemoRecordScript = await readFile(join(docsRoot, "scripts", "record-local-demo.sh"), "utf8");
+for (const expected of [
+  "AGENTDISPATCH_DEMO_RECORD_DIR",
+  "local-demo.transcript.txt",
+  "local-demo.report.json",
+  "doesNotProve",
+  "spawn_cloud_agent"
+]) {
+  mustInclude(localDemoRecordScript, expected, "scripts/record-local-demo.sh", `documents ${expected}`);
 }
 
 const localE2eScript = await readFile(join(docsRoot, "scripts", "verify-local-e2e.sh"), "utf8");
@@ -188,6 +199,7 @@ mustInclude(docsReadme, "./docs/release-status.md", "README.md", "links release 
 mustInclude(docsReadme, "actions/workflows/local-e2e.yml/badge.svg", "README.md", "shows local E2E badge");
 mustInclude(docsReadme, "actions/workflows/live-aws-verification.yml/badge.svg", "README.md", "shows live AWS verification badge");
 mustInclude(docsReadme, "npm --prefix agentdispatch-docs run demo:local", "README.md", "shows executable local demo");
+mustInclude(docsReadme, "npm --prefix agentdispatch-docs run demo:record", "README.md", "shows demo recording command");
 mustInclude(docsReadme, "npm --prefix agentdispatch-docs run status:release", "README.md", "shows release status command");
 mustInclude(docsReadme, "npm --prefix agentdispatch-docs run status:npm", "README.md", "shows npm status command");
 
@@ -250,6 +262,8 @@ const launchEvidence = await readFile(join(docsRoot, "docs", "launch-evidence.md
 for (const expected of [
   "AGENTDISPATCH_LOCAL_E2E_REPORT=./agentdispatch-local-e2e-report.json",
   "agentdispatch-release-status.json",
+  "AGENTDISPATCH_DEMO_RECORD_DIR=./agentdispatch-local-demo-recording",
+  "local-demo.report.json",
   "status:npm",
   "smoke:published",
   "AGENTDISPATCH_LIVE_DISPATCH=1",
@@ -299,6 +313,7 @@ mustInclude(launchAnnouncementKit, "./examples.md", "docs/launch-announcement-ki
 mustInclude(launchAnnouncementKit, "./contributor-issue-bank.md", "docs/launch-announcement-kit.md", "links contributor issue bank");
 mustInclude(launchAnnouncementKit, "./release-runbook.md", "docs/launch-announcement-kit.md", "links release runbook");
 mustInclude(launchAnnouncementKit, "demo:local", "docs/launch-announcement-kit.md", "references executable local demo");
+mustInclude(launchAnnouncementKit, "demo:record", "docs/launch-announcement-kit.md", "references demo recording");
 mustInclude(launchAnnouncementKit, "status:release", "docs/launch-announcement-kit.md", "references release status");
 
 const releaseRunbook = await readFile(join(docsRoot, "docs", "release-runbook.md"), "utf8");
@@ -321,6 +336,8 @@ for (const expected of [
 const localDemoTranscript = await readFile(join(docsRoot, "docs", "local-demo-transcript.md"), "utf8");
 mustInclude(localDemoTranscript, "./lead-agent-prompt-kit.md", "docs/local-demo-transcript.md", "links lead agent prompt kit");
 mustInclude(localDemoTranscript, "demo:local", "docs/local-demo-transcript.md", "references executable local demo");
+mustInclude(localDemoTranscript, "demo:record", "docs/local-demo-transcript.md", "references demo recording");
+mustInclude(localDemoTranscript, "AGENTDISPATCH_DEMO_RECORD_DIR", "docs/local-demo-transcript.md", "documents deterministic demo artifact paths");
 
 const packageConsumption = await readFile(join(docsRoot, "docs", "package-consumption.md"), "utf8");
 mustInclude(packageConsumption, "smoke:published", "docs/package-consumption.md", "documents published package smoke");
@@ -336,6 +353,7 @@ mustInclude(launchChecklist, "./lead-agent-prompt-kit.md", "docs/repo-launch-che
 mustInclude(launchChecklist, "./release-runbook.md", "docs/repo-launch-checklist.md", "links release runbook");
 mustInclude(launchChecklist, "./release-status.md", "docs/repo-launch-checklist.md", "links release status");
 mustInclude(launchChecklist, "demo:local", "docs/repo-launch-checklist.md", "runs executable local demo");
+mustInclude(launchChecklist, "demo:record", "docs/repo-launch-checklist.md", "records local demo");
 mustInclude(launchChecklist, "status:release", "docs/repo-launch-checklist.md", "runs release status");
 mustInclude(launchChecklist, "status:npm", "docs/repo-launch-checklist.md", "runs npm status");
 mustInclude(launchChecklist, "AGENTDISPATCH_LOCAL_E2E_REPORT", "docs/repo-launch-checklist.md", "captures local E2E report");
@@ -372,6 +390,8 @@ for (const expected of [
 const examples = await readFile(join(docsRoot, "docs", "examples.md"), "utf8");
 for (const expected of [
   "Local no-cloud demo",
+  "demo:record",
+  "AGENTDISPATCH_DEMO_RECORD_DIR",
   "Published npm canary",
   "./use-cases.md",
   "Lead-Agent Prompt Kit",

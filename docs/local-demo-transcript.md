@@ -10,6 +10,14 @@ Run the executable local demo from the multi-repo workspace:
 npm --prefix agentdispatch-docs run demo:local
 ```
 
+For launch notes, recorded narration, or a pull-request artifact, capture a sanitized transcript plus JSON report:
+
+```bash
+npm --prefix agentdispatch-docs run demo:record
+```
+
+Set `AGENTDISPATCH_DEMO_RECORD_DIR=/path/to/output` when you want deterministic artifact paths. Without it, the recorder writes to a temporary directory and prints the transcript, raw output, and report paths.
+
 Or run the commands manually:
 
 ```bash

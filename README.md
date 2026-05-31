@@ -40,6 +40,12 @@ npm --prefix agentdispatch-docs run demo:local
 
 This creates a temporary config, runs local `agentdispatch doctor`, checks the MCP server, and prints the lead-agent handoff payload without touching live AWS state.
 
+To capture a sanitized transcript and JSON report for launch notes or demo narration:
+
+```bash
+npm --prefix agentdispatch-docs run demo:record
+```
+
 Before a public push, release, or announcement, run the release status summary:
 
 ```bash

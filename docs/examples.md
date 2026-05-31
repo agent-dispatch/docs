@@ -25,6 +25,14 @@ This creates a temporary config, runs `agentdispatch doctor`, starts the MCP ser
 
 Use this when recording a launch demo without live AWS credentials. Pair it with the [local demo transcript](./local-demo-transcript.md).
 
+To retain demo artifacts for a launch post or PR:
+
+```bash
+npm --prefix agentdispatch-docs run demo:record
+```
+
+That writes a sanitized transcript, raw command output, and JSON report. Use `AGENTDISPATCH_DEMO_RECORD_DIR=/path/to/output` when you want stable artifact paths.
+
 Claim boundary:
 
 - You can say local CLI config, local doctor, MCP startup, and handoff shape work.

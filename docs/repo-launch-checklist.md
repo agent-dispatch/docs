@@ -26,6 +26,7 @@ Use this checklist before a public push, announcement, or launch post. The goal 
 - Retain the [launch evidence](./launch-evidence.md) artifacts before posting claims.
 - Include the [lead agent prompt kit](./lead-agent-prompt-kit.md) so Claude Code, Codex, OpenClaw, Hermes, and other MCP users can try AgentDispatch from copy-paste prompts.
 - Run `npm --prefix agentdispatch-docs run demo:local` before recording or posting the demo.
+- Run `npm --prefix agentdispatch-docs run demo:record` to retain a sanitized transcript and JSON report.
 - Record a short terminal demo:
   - create config
   - run doctor
