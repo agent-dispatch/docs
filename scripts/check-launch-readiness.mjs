@@ -98,6 +98,7 @@ const docsReadme = await readFile(join(docsRoot, "README.md"), "utf8");
 mustInclude(docsReadme, "./docs/live-aws-verification.md", "README.md", "links live AWS verification runbook");
 mustInclude(docsReadme, "./docs/verification-matrix.md", "README.md", "links verification matrix");
 mustInclude(docsReadme, "./docs/contributor-map.md", "README.md", "links contributor map");
+mustInclude(docsReadme, "./docs/lead-agent-prompt-kit.md", "README.md", "links lead agent prompt kit");
 mustInclude(docsReadme, "actions/workflows/local-e2e.yml/badge.svg", "README.md", "shows local E2E badge");
 mustInclude(docsReadme, "actions/workflows/live-aws-verification.yml/badge.svg", "README.md", "shows live AWS verification badge");
 
@@ -148,9 +149,33 @@ for (const expected of [
   mustInclude(liveAwsVerification, expected, "docs/live-aws-verification.md", `documents ${expected}`);
 }
 
+const leadAgentPromptKit = await readFile(join(docsRoot, "docs", "lead-agent-prompt-kit.md"), "utf8");
+for (const expected of [
+  "Claude Code",
+  "Codex",
+  "OpenClaw",
+  "Hermes",
+  "spawn_cloud_agent",
+  "check_cloud_agent_runtime",
+  "get_task_status",
+  "get_task_logs",
+  "get_task_result",
+  "AGENTDISPATCH_LIVE_DISPATCH=1",
+  "A2A Follow-Up Prompt"
+]) {
+  mustInclude(leadAgentPromptKit, expected, "docs/lead-agent-prompt-kit.md", `documents ${expected}`);
+}
+
+const launchAnnouncementKit = await readFile(join(docsRoot, "docs", "launch-announcement-kit.md"), "utf8");
+mustInclude(launchAnnouncementKit, "./lead-agent-prompt-kit.md", "docs/launch-announcement-kit.md", "links lead agent prompt kit");
+
+const localDemoTranscript = await readFile(join(docsRoot, "docs", "local-demo-transcript.md"), "utf8");
+mustInclude(localDemoTranscript, "./lead-agent-prompt-kit.md", "docs/local-demo-transcript.md", "links lead agent prompt kit");
+
 const launchChecklist = await readFile(join(docsRoot, "docs", "repo-launch-checklist.md"), "utf8");
 mustInclude(launchChecklist, "./verification-matrix.md", "docs/repo-launch-checklist.md", "links verification matrix");
 mustInclude(launchChecklist, "./live-aws-verification.md", "docs/repo-launch-checklist.md", "links live AWS runbook");
+mustInclude(launchChecklist, "./lead-agent-prompt-kit.md", "docs/repo-launch-checklist.md", "links lead agent prompt kit");
 mustInclude(launchChecklist, "AGENTDISPATCH_LIVE_REPORT", "docs/repo-launch-checklist.md", "captures live AWS report path");
 
 if (failures.length > 0) {

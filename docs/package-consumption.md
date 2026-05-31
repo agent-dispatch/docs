@@ -221,6 +221,8 @@ Immediate response:
 
 The agent then polls `get_task_status`, streams logs with `get_task_logs`, retrieves final output with `get_task_result`, or cancels with `cancel_task`.
 
+For copy-paste client prompts, see the [lead agent prompt kit](./lead-agent-prompt-kit.md). It includes Claude Code, Codex, OpenClaw, Hermes, runtime preflight, dispatch, polling, result retrieval, and A2A follow-up prompts.
+
 The equivalent CLI call uses config defaults, so users only define the task:
 
 ```bash

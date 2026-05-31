@@ -14,6 +14,7 @@ Documentation for AgentDispatch: the provider-neutral MCP control plane for spaw
 - [AgentCore runtime design](./docs/agent-core-runtime-design.md) — deeper AgentCore runtime notes and implementation decisions.
 - [Future provider adapters](./docs/future-provider-adapters.md) — how GCP, Azure, Kubernetes, and local adapters fit the same MCP contract.
 - [Package consumption](./docs/package-consumption.md) — how the separate repos and NPM packages work together.
+- [Lead agent prompt kit](./docs/lead-agent-prompt-kit.md) — copy-paste prompts for Claude Code, Codex, OpenClaw, Hermes, and MCP-capable lead agents.
 - [Contributor map](./docs/contributor-map.md) — where to make changes and how to choose a first contribution path.
 - [Local demo transcript](./docs/local-demo-transcript.md) — short copyable terminal path for a launch demo without live AWS credentials.
 - [Verification matrix](./docs/verification-matrix.md) — what local E2E proves, what live AWS proves, and what not to claim.
@@ -52,6 +53,7 @@ OpenClaw, Hermes Agent, Claude Code, Codex, and custom orchestrators should trea
 - Call `spawn_cloud_agent` when work should leave the local agent process.
 - Use `task_id` to poll durable status and retrieve results.
 - Use returned `cloud_agent` metadata to continue native subagent interaction when the runtime supports it.
+- Start from the [lead agent prompt kit](./docs/lead-agent-prompt-kit.md) when wiring a new MCP client or recording a demo.
 
 ## For adapter builders
 

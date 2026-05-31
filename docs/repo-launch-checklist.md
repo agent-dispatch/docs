@@ -22,6 +22,7 @@ Use this checklist before a public push, announcement, or launch post. The goal 
 ## Demo Assets
 
 - Include the copyable [local demo transcript](./local-demo-transcript.md) for launch posts and README links when a recorded demo is not available yet.
+- Include the [lead agent prompt kit](./lead-agent-prompt-kit.md) so Claude Code, Codex, OpenClaw, Hermes, and other MCP users can try AgentDispatch from copy-paste prompts.
 - Record a short terminal demo:
   - create config
   - run doctor

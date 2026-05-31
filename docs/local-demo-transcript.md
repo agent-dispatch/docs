@@ -52,6 +52,8 @@ Use AgentDispatch to spawn a cloud agent for this repository audit.
 Keep working locally while it runs, then poll the result.
 ```
 
+For client-specific copy, use the [lead agent prompt kit](./lead-agent-prompt-kit.md).
+
 The agent-facing call is:
 
 ```json
