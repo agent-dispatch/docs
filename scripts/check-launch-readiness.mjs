@@ -80,6 +80,7 @@ for (const pkg of packages) {
   mustInclude(readme, "npm test", label, "documents test command");
   mustInclude(readme, "npm run build", label, "documents build command");
   mustInclude(readme, "docs/release.md", label, "links release workflow");
+  mustInclude(readme, `agent-dispatch/${publicRepoName(pkg.repo)}/actions/workflows/ci.yml`, label, "shows package CI badge");
 
   if (!/MCP|adapter|cloud|AgentCore|provider-neutral/i.test(readme)) {
     failures.push(`${label}: does not explain how the package fits the AgentDispatch architecture`);
@@ -118,6 +119,7 @@ for (const pkg of packages) {
 
   mustInclude(releaseDoc, "Release", `${pkg.repo}/docs/release.md`, "documents release policy");
   if (pkg.publicPackage) {
+    mustInclude(readme, `npmjs.com/package/${pkg.packageName}`, label, "links public npm package");
     mustEqual(packageJson.publishConfig?.access, "public", packageJsonLabel, "publishes publicly");
     const publishWorkflow = await readFile(join(workspaceRoot, pkg.repo, ".github", "workflows", "publish.yml"), "utf8");
     for (const expected of [
@@ -135,6 +137,9 @@ for (const pkg of packages) {
     mustInclude(releaseDoc, "Trusted Publisher", `${pkg.repo}/docs/release.md`, "documents Trusted Publisher");
   } else {
     mustEqual(packageJson.private, true, packageJsonLabel, "keeps template private");
+    if (readme.includes("npmjs.com/package/") || readme.includes("img.shields.io/npm/v/")) {
+      failures.push(`${label}: private template must not present itself as a published npm package`);
+    }
     mustInclude(releaseDoc, "Do not publish", `${pkg.repo}/docs/release.md`, "documents no-publish policy");
   }
 }
@@ -284,6 +289,10 @@ function mustIncludeArray(value, expected, label, reason) {
   if (!Array.isArray(value) || !value.includes(expected)) {
     failures.push(`${label}: missing ${JSON.stringify(expected)} (${reason})`);
   }
+}
+
+function publicRepoName(repo) {
+  return repo.replace(/^agentdispatch-/, "");
 }
 
 function assertReadmeLinksWorkOnNpm(readme, packageJson, label) {
