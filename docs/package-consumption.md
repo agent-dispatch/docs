@@ -78,6 +78,19 @@ The smoke script expects the sibling repositories to exist under the same worksp
 
 It builds and packs each package in dependency order, installs the tarballs into a fresh temporary consumer project, imports every public package, runs `agentdispatch init`, runs `agentdispatch doctor --json`, and runs `agentdispatch-mcp --check`. Set `AGENTDISPATCH_WORKSPACE_ROOT=/path/to/workspace` when running from a different checkout layout.
 
+## Published Package Smoke Test
+
+After packages are published, verify the public registry path from a fresh consumer project:
+
+```bash
+cd agentdispatch-docs
+npm run smoke:published
+```
+
+That smoke installs the current npm versions of the public `@agent-dispatch/*` packages, imports the public modules, runs `npx --no-install agentdispatch init`, runs `agentdispatch doctor --json`, and runs `agentdispatch-mcp --check`.
+
+This check intentionally uses the compatibility-minimal `agentdispatch init` flags supported by the currently published CLI. New local CLI flags, such as protocol-specific setup, are covered by `verify:local-e2e` until the next package release reaches npm.
+
 ## Account Profile Config
 
 Users configure cloud accounts outside MCP calls. Raw cloud credentials are never passed through MCP.

@@ -26,6 +26,16 @@ AGENTDISPATCH_VERIFY_INSTALL=1 npm --prefix agentdispatch-docs run verify:local-
 
 This proves package installs, tests, typechecks, builds, package tarball consumption, CLI bootstrap, MCP server startup, docs validation, profile assets, and website validation against the current workspace.
 
+## Required Published-Install Gate
+
+After the package line is published, run the registry canary:
+
+```bash
+npm --prefix agentdispatch-docs run smoke:published
+```
+
+This installs the current public npm versions into a fresh consumer project, imports every public package, and checks the published `agentdispatch` and `agentdispatch-mcp` bins. Use this before launch posts that tell users to install from npm.
+
 ## Package Repo Gate
 
 Each public package repo must have:

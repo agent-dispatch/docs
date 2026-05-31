@@ -25,6 +25,7 @@ That gate verifies:
 | Type safety | Runs `npm run typecheck` for packages that expose a typecheck script. |
 | Build output | Runs `npm run build` for packages that expose a build script. |
 | Package consumption | Packs local publishable packages, installs those tarballs into downstream packages, then runs the package-consumption smoke test. |
+| Published install canary | `smoke:published` installs current npm packages in a fresh consumer and verifies public imports plus CLI/MCP bins. |
 | CLI bootstrap | Runs the built CLI `init` command and validates `doctor --json` returns `ok: true`. |
 | MCP startup | Runs the built MCP server with `--check` and validates the JSON report returns `ok: true`. |
 | Launch assets | Checks GitHub profile artwork, social preview dimensions, website validation, profile validation, and docs launch checks. |

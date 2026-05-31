@@ -109,6 +109,7 @@ Run from docs:
 ```bash
 npm test
 npm run smoke:packages
+npm run smoke:published
 ```
 
 Run from website:

@@ -148,6 +148,13 @@ await assertSyncedAsset(
   "agentdispatch-website/src/assets/org-logo.svg"
 );
 
+const docsPackageJson = JSON.parse(await readFile(join(docsRoot, "package.json"), "utf8"));
+for (const script of ["verify:local-e2e", "verify:aws-live", "smoke:packages", "smoke:published"]) {
+  if (!docsPackageJson.scripts?.[script]) {
+    failures.push(`package.json: missing script ${script}`);
+  }
+}
+
 const docsReadme = await readFile(join(docsRoot, "README.md"), "utf8");
 mustInclude(docsReadme, "./docs/live-aws-verification.md", "README.md", "links live AWS verification runbook");
 mustInclude(docsReadme, "./docs/verification-matrix.md", "README.md", "links verification matrix");
@@ -181,6 +188,7 @@ for (const expected of [
 const verificationMatrix = await readFile(join(docsRoot, "docs", "verification-matrix.md"), "utf8");
 for (const expected of [
   "verify:local-e2e",
+  "smoke:published",
   "verify:aws-live",
   "AGENTDISPATCH_LIVE_DISPATCH=1",
   "Do not use local E2E evidence as proof that live AWS dispatch works",
@@ -229,6 +237,7 @@ const releaseRunbook = await readFile(join(docsRoot, "docs", "release-runbook.md
 for (const expected of [
   "Release Order",
   "Trusted Publisher",
+  "smoke:published",
   "npm publish --provenance --access public",
   "AGENTDISPATCH_VERIFY_INSTALL=1 npm --prefix agentdispatch-docs run verify:local-e2e",
   "@agent-dispatch/core",
@@ -241,11 +250,15 @@ for (const expected of [
 const localDemoTranscript = await readFile(join(docsRoot, "docs", "local-demo-transcript.md"), "utf8");
 mustInclude(localDemoTranscript, "./lead-agent-prompt-kit.md", "docs/local-demo-transcript.md", "links lead agent prompt kit");
 
+const packageConsumption = await readFile(join(docsRoot, "docs", "package-consumption.md"), "utf8");
+mustInclude(packageConsumption, "smoke:published", "docs/package-consumption.md", "documents published package smoke");
+
 const launchChecklist = await readFile(join(docsRoot, "docs", "repo-launch-checklist.md"), "utf8");
 mustInclude(launchChecklist, "./verification-matrix.md", "docs/repo-launch-checklist.md", "links verification matrix");
 mustInclude(launchChecklist, "./live-aws-verification.md", "docs/repo-launch-checklist.md", "links live AWS runbook");
 mustInclude(launchChecklist, "./lead-agent-prompt-kit.md", "docs/repo-launch-checklist.md", "links lead agent prompt kit");
 mustInclude(launchChecklist, "./release-runbook.md", "docs/repo-launch-checklist.md", "links release runbook");
+mustInclude(launchChecklist, "npm run smoke:published", "docs/repo-launch-checklist.md", "runs published package smoke");
 mustInclude(launchChecklist, "AGENTDISPATCH_LIVE_REPORT", "docs/repo-launch-checklist.md", "captures live AWS report path");
 
 if (failures.length > 0) {
