@@ -21,6 +21,7 @@ Use this checklist before a public push, announcement, or launch post. The goal 
 
 ## Demo Assets
 
+- Include the copyable [local demo transcript](./local-demo-transcript.md) for launch posts and README links when a recorded demo is not available yet.
 - Record a short terminal demo:
   - create config
   - run doctor
@@ -62,6 +63,7 @@ Use this checklist before a public push, announcement, or launch post. The goal 
   - LangGraph worker adapter
   - OpenAI Agents worker adapter
 - Add one architecture issue for artifact browsing and one for provider-neutral live preflight.
+- Keep the org-wide issue templates in `agent-dispatch/.github` aligned with these contribution paths.
 
 ## Announcement Copy
 
