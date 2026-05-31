@@ -16,6 +16,8 @@ For a session-mode runtime, the live preflight proves:
 
 With `AGENTDISPATCH_LIVE_DISPATCH=1`, the script also submits a real `agentdispatch run --wait` task and waits for a terminal AgentDispatch result.
 
+Successful runs write a JSON evidence file. By default it is `agentdispatch-live-aws-report.json` in the current directory. Override it with `AGENTDISPATCH_LIVE_REPORT=/absolute/path/live-aws-report.json`.
+
 ## What This Does Not Prove
 
 Preflight alone does not prove the cloud worker can complete an arbitrary task. It does not upload worker images, create IAM roles, change quotas, or guarantee that a runtime image contains your requested framework tools.
@@ -60,6 +62,7 @@ Run this from the parent multi-repo workspace:
 ```bash
 AGENTDISPATCH_CONFIG=/absolute/path/agentdispatch.config.json \
 AGENTDISPATCH_RUNTIME=research-agent \
+AGENTDISPATCH_LIVE_REPORT=./agentdispatch-live-aws-report.json \
 npm --prefix agentdispatch-docs run verify:aws-live
 ```
 
@@ -69,6 +72,8 @@ Expected successful ending:
 Live AWS preflight passed.
 Set AGENTDISPATCH_LIVE_DISPATCH=1 to also submit a real cloud task.
 ```
+
+The report records the target runtime, region, protocol, doctor checks, whether dispatch was requested, and the claim supported by the run. It does not include AWS secret values.
 
 If the script fails before calling AWS, fix the named local config issue first. If it fails during `doctor --aws-live`, use the failed check name and message from the JSON report to decide whether the problem is credentials, region, permissions, runtime ARN, or runtime readiness.
 
@@ -81,10 +86,13 @@ AGENTDISPATCH_CONFIG=/absolute/path/agentdispatch.config.json \
 AGENTDISPATCH_RUNTIME=research-agent \
 AGENTDISPATCH_LIVE_DISPATCH=1 \
 AGENTDISPATCH_LIVE_INSTRUCTION="AgentDispatch live smoke: respond with a short success message and no external side effects." \
+AGENTDISPATCH_LIVE_REPORT=./agentdispatch-live-aws-dispatch-report.json \
 npm --prefix agentdispatch-docs run verify:aws-live
 ```
 
 Successful output includes the initial task handle, streamed logs if the runtime emits any, and the final AgentDispatch result JSON.
+
+For launch evidence, keep the generated report with the release checklist. The report claim should read `Live AWS dispatch verified against a real AgentCore runtime.` before making a public live-dispatch claim.
 
 ## Troubleshooting
 
@@ -93,6 +101,7 @@ Successful output includes the initial task handle, streamed logs if the runtime
 - `AWS credentials could not be resolved`: configure `AWS_PROFILE`, `AWS_ACCESS_KEY_ID`/`AWS_SECRET_ACCESS_KEY`, SSO, or another SDK-supported credential source.
 - `runtime was not reachable`: check region, runtime ARN, `bedrock-agentcore:GetAgentRuntime`, and whether the AgentCore runtime still exists.
 - dispatch times out after preflight passes: inspect the AgentCore runtime logs and confirm the worker image implements the configured protocol.
+- report file is missing: the script did not reach a successful preflight, or the `AGENTDISPATCH_LIVE_REPORT` path was not writable.
 
 ## Launch Claim Rule
 

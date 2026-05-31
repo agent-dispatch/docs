@@ -164,7 +164,7 @@ Avoid these claims unless live evidence exists:
 - Do not call every future provider implemented; say the contract is ready for adapter packages.
 - Do not imply raw credentials are handled by the agent; account profiles and provider credential chains are outside MCP payloads.
 - Do not claim autonomous production maturity; the credible claim is a tested local control plane, stable MCP surface, and adapter boundary.
-- Use [Live AWS verification](./live-aws-verification.md) before making any public live-cloud claim.
+- Use [Live AWS verification](./live-aws-verification.md) and keep its JSON evidence report before making any public live-cloud claim.
 
 ## Links
 

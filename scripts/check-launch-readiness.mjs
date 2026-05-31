@@ -103,13 +103,16 @@ for (const expected of [
   "What This Proves",
   "What This Does Not Prove",
   "Launch Claim Rule",
-  "sample placeholder"
+  "sample placeholder",
+  "AGENTDISPATCH_LIVE_REPORT",
+  "agentdispatch-live-aws-report.json"
 ]) {
   mustInclude(liveAwsVerification, expected, "docs/live-aws-verification.md", `documents ${expected}`);
 }
 
 const launchChecklist = await readFile(join(docsRoot, "docs", "repo-launch-checklist.md"), "utf8");
 mustInclude(launchChecklist, "./live-aws-verification.md", "docs/repo-launch-checklist.md", "links live AWS runbook");
+mustInclude(launchChecklist, "AGENTDISPATCH_LIVE_REPORT", "docs/repo-launch-checklist.md", "captures live AWS report path");
 
 if (failures.length > 0) {
   console.error(failures.join("\n"));

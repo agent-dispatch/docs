@@ -6,6 +6,7 @@ docs_root="$(cd "$script_dir/.." && pwd)"
 workspace_root="${AGENTDISPATCH_WORKSPACE_ROOT:-$(cd "$docs_root/.." && pwd)}"
 config="${AGENTDISPATCH_CONFIG:-agentdispatch.config.json}"
 runtime="${AGENTDISPATCH_RUNTIME:-research-agent}"
+report_path="${AGENTDISPATCH_LIVE_REPORT:-agentdispatch-live-aws-report.json}"
 placeholder_runtime_arn="arn:aws:bedrock-agentcore:us-west-2:123456789012:agent/00000000-0000-0000-0000-000000000000:1"
 
 if [[ -f "$workspace_root/agentdispatch-cli/dist/index.js" ]]; then
@@ -20,12 +21,17 @@ if [[ ! -f "$config" ]]; then
   exit 1
 fi
 
-node - "$config" "$runtime" "$placeholder_runtime_arn" <<'NODE'
+target_output="$(mktemp)"
+doctor_output="$(mktemp)"
+dispatch_output="$(mktemp)"
+trap 'rm -f "$target_output" "$doctor_output" "$dispatch_output"' EXIT
+
+node - "$config" "$runtime" "$placeholder_runtime_arn" "$target_output" <<'NODE'
 const fs = require("node:fs");
 const path = require("node:path");
 
 try {
-  const [, , configPath, runtimeName, placeholderRuntimeArn] = process.argv;
+  const [, , configPath, runtimeName, placeholderRuntimeArn, targetOutput] = process.argv;
   const raw = fs.readFileSync(configPath, "utf8");
   let config;
   try {
@@ -68,6 +74,16 @@ try {
 
   console.error(`Live AWS target: runtime=${runtimeName} mode=${mode} region=${region} config=${path.resolve(configPath)}`);
   if (mode === "session") console.error(`Live AWS target runtimeArn=${runtimeArn}`);
+  fs.writeFileSync(targetOutput, `${JSON.stringify({
+    configPath: path.resolve(configPath),
+    runtime: runtimeName,
+    backend: runtime.backend,
+    account: runtime.account ?? backend.account,
+    mode,
+    region,
+    protocol: runtime.protocol ?? runtime.target?.protocol ?? backend.details?.protocol ?? null,
+    runtimeArn: runtimeArn ?? null
+  }, null, 2)}\n`);
 } catch (error) {
   console.error(`Live AWS verification input error: ${error.message}`);
   process.exit(1);
@@ -77,8 +93,6 @@ NODE
 echo
 echo "Running live AWS AgentCore preflight."
 echo "This resolves AWS credentials and checks the configured AgentCore runtime/control plane."
-doctor_output="$(mktemp)"
-trap 'rm -f "$doctor_output"' EXIT
 "${cli[@]}" doctor --config "$config" --runtime "$runtime" --aws-live --json > "$doctor_output"
 cat "$doctor_output"
 node - "$doctor_output" <<'NODE'
@@ -93,7 +107,42 @@ for (const check of report.checks ?? []) {
 process.exit(1);
 NODE
 
+write_report() {
+  local dispatch_status="$1"
+  node - "$target_output" "$doctor_output" "$report_path" "$dispatch_status" "$dispatch_output" <<'NODE'
+const fs = require("node:fs");
+const path = require("node:path");
+
+const [, , targetPath, doctorPath, reportPath, dispatchStatus, dispatchOutputPath] = process.argv;
+const target = JSON.parse(fs.readFileSync(targetPath, "utf8"));
+const doctor = JSON.parse(fs.readFileSync(doctorPath, "utf8"));
+const dispatchOutput = fs.existsSync(dispatchOutputPath) ? fs.readFileSync(dispatchOutputPath, "utf8") : "";
+const report = {
+  generatedAt: new Date().toISOString(),
+  kind: "agentdispatch-live-aws-verification",
+  target,
+  preflight: {
+    ok: doctor.ok === true,
+    checks: doctor.checks ?? []
+  },
+  dispatch: {
+    requested: process.env.AGENTDISPATCH_LIVE_DISPATCH === "1",
+    status: dispatchStatus,
+    output: dispatchOutput || null
+  },
+  claim: dispatchStatus === "succeeded"
+    ? "Live AWS dispatch verified against a real AgentCore runtime."
+    : "Live AWS preflight verified; live dispatch was not requested."
+};
+
+fs.mkdirSync(path.dirname(path.resolve(reportPath)), { recursive: true });
+fs.writeFileSync(reportPath, `${JSON.stringify(report, null, 2)}\n`);
+console.error(`Wrote live AWS verification report: ${path.resolve(reportPath)}`);
+NODE
+}
+
 if [[ "${AGENTDISPATCH_LIVE_DISPATCH:-0}" != "1" ]]; then
+  write_report "not-requested"
   echo
   echo "Live AWS preflight passed."
   echo "Set AGENTDISPATCH_LIVE_DISPATCH=1 to also submit a real cloud task. That may incur AWS cost and will write task state under the configured stateDir."
@@ -110,4 +159,5 @@ echo "Submitting live AWS AgentCore task for runtime '$runtime'."
   --runtime "$runtime" \
   --instruction "$instruction" \
   --wait \
-  --timeout-ms "$timeout_ms"
+  --timeout-ms "$timeout_ms" | tee "$dispatch_output"
+write_report "succeeded"
