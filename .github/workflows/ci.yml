@@ -63,9 +63,9 @@ jobs:
       - name: Mirror approved org assets into website checkout
         run: |
           mkdir -p .agentdispatch-workspace/agentdispatch-website/src/assets
-          cp -n .agentdispatch-workspace/agentdispatch-github-profile/profile/assets/org-logo.svg \
+          cp .agentdispatch-workspace/agentdispatch-github-profile/profile/assets/org-logo.svg \
             .agentdispatch-workspace/agentdispatch-website/src/assets/org-logo.svg
-          cp -n .agentdispatch-workspace/agentdispatch-github-profile/profile/assets/repo-social-preview.png \
+          cp .agentdispatch-workspace/agentdispatch-github-profile/profile/assets/repo-social-preview.png \
             .agentdispatch-workspace/agentdispatch-website/src/assets/repo-social-preview.png
       - name: Validate docs
         env:
