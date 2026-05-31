@@ -67,7 +67,7 @@ Use this checklist before a public push, announcement, or launch post. The goal 
 
 ## Announcement Copy
 
-Use direct, technical language:
+Use the copy-ready [launch announcement kit](./launch-announcement-kit.md) for GitHub, X, LinkedIn, Hacker News, Reddit, and demo narration. Keep the language direct and technical:
 
 ```text
 AgentDispatch lets a local MCP-capable lead agent spawn a durable cloud subagent.
