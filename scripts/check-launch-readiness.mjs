@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { readFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -84,6 +85,15 @@ for (const pkg of packages) {
   }
 }
 
+await assertSyncedAsset(
+  "agentdispatch-github-profile/profile/assets/repo-social-preview.png",
+  "agentdispatch-website/src/assets/repo-social-preview.png"
+);
+await assertSyncedAsset(
+  "agentdispatch-github-profile/profile/assets/org-logo.svg",
+  "agentdispatch-website/src/assets/org-logo.svg"
+);
+
 if (failures.length > 0) {
   console.error(failures.join("\n"));
   process.exit(1);
@@ -95,4 +105,16 @@ function mustInclude(text, expected, label, reason) {
   if (!text.includes(expected)) {
     failures.push(`${label}: missing ${JSON.stringify(expected)} (${reason})`);
   }
+}
+
+async function assertSyncedAsset(source, copy) {
+  const sourceHash = hash(await readFile(join(workspaceRoot, source)));
+  const copyHash = hash(await readFile(join(workspaceRoot, copy)));
+  if (sourceHash !== copyHash) {
+    failures.push(`${copy}: must match ${source}`);
+  }
+}
+
+function hash(bytes) {
+  return createHash("sha256").update(bytes).digest("hex");
 }
