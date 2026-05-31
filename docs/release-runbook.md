@@ -111,7 +111,6 @@ Each public package repo must have:
 - `npm run build`
 - `npm publish` in the publish workflow, with `publishConfig.access = "public"`
 - `permissions.id-token: write` in the publish workflow for npm Trusted Publisher
-- `package-manager-cache: false` in the publish workflow release setup
 
 The adapter template must keep CI and `docs/release.md`, but it must remain private.
 
