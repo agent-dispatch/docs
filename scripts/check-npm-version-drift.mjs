@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { execFileSync } from "node:child_process";
-import { readFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -37,6 +37,10 @@ const report = {
   packages,
   summary
 };
+
+if (process.env.AGENTDISPATCH_NPM_STATUS_REPORT) {
+  writeJsonReport(process.env.AGENTDISPATCH_NPM_STATUS_REPORT, report);
+}
 
 if (args.has("--json")) {
   process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);
@@ -161,4 +165,10 @@ function parseVersion(version) {
     .split(".")
     .map((part) => Number.parseInt(part, 10))
     .map((part) => (Number.isFinite(part) ? part : 0));
+}
+
+function writeJsonReport(path, reportPayload) {
+  const reportPath = resolve(path);
+  mkdirSync(dirname(reportPath), { recursive: true });
+  writeFileSync(reportPath, `${JSON.stringify(reportPayload, null, 2)}\n`);
 }

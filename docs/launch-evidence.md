@@ -53,11 +53,14 @@ The output should include:
 
 ```text
 Retained local E2E report found: yes
+Retained published canary report found: yes
+Retained npm version report found: yes
+Retained security audit report found: yes
 Local launch claim ready from repo state: yes
 Live AWS dispatch claim ready: no
 ```
 
-The first two lines are enough for a local launch claim. The live AWS line must remain `no` until the live AWS verification path writes a successful dispatch report.
+The retained local E2E line and clean repo-state line are enough for a local launch claim. The npm and security lines support install and dependency-health claims. The live AWS line must remain `no` until the live AWS verification path writes a successful dispatch report.
 
 For automation or release notes, capture JSON:
 
@@ -70,8 +73,13 @@ npm --prefix agentdispatch-docs run status:release -- --json > agentdispatch-rel
 Before telling users to install from npm, run both npm checks:
 
 ```bash
+AGENTDISPATCH_NPM_STATUS_REPORT=./agentdispatch-npm-status-report.json \
 npm --prefix agentdispatch-docs run status:npm
-npm --prefix agentdispatch-docs run status:security
+
+AGENTDISPATCH_SECURITY_REPORT=./agentdispatch-security-audit-report.json \
+npm --prefix agentdispatch-docs run status:security -- --strict
+
+AGENTDISPATCH_PUBLISHED_SMOKE_REPORT=./agentdispatch-published-smoke-report.json \
 npm --prefix agentdispatch-docs run smoke:published
 ```
 
@@ -123,9 +131,10 @@ Keep these artifacts with the launch notes:
 
 - `agentdispatch-local-e2e-report.json`
 - `agentdispatch-release-status.json`
+- `agentdispatch-npm-status-report.json`
+- `agentdispatch-security-audit-report.json`
+- `agentdispatch-published-smoke-report.json`
 - `agentdispatch-live-aws-report.json`, if live preflight was run
 - `agentdispatch-live-aws-dispatch-report.json`, if live dispatch was run
-- terminal output or CI links for `status:npm` and `smoke:published`
-- terminal output or CI links for `status:security`
 
 Do not commit account-specific live AWS reports if they contain private runtime names, account IDs, regions, or operational metadata that should stay private.

@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import { spawn } from "node:child_process";
-import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { basename, join } from "node:path";
+import { basename, dirname, join, resolve } from "node:path";
 
 const packages = [
   "@agent-dispatch/core",
@@ -64,16 +64,29 @@ try {
     throw new Error("Published CLI config did not include defaults.runtime=research-agent.");
   }
 
-  console.log(JSON.stringify({
+  const report = {
+    generatedAt: new Date().toISOString(),
     ok: true,
     versions,
     tempKept: keepTemp,
     consumerDir: keepTemp ? consumerDir : basename(consumerDir)
-  }, null, 2));
+  };
+
+  if (process.env.AGENTDISPATCH_PUBLISHED_SMOKE_REPORT) {
+    await writeJsonReport(process.env.AGENTDISPATCH_PUBLISHED_SMOKE_REPORT, report);
+  }
+
+  console.log(JSON.stringify(report, null, 2));
 } finally {
   if (!keepTemp) {
     await rm(consumerDir, { recursive: true, force: true });
   }
+}
+
+async function writeJsonReport(path, reportPayload) {
+  const reportPath = resolve(path);
+  await mkdir(dirname(reportPath), { recursive: true });
+  await writeFile(reportPath, `${JSON.stringify(reportPayload, null, 2)}\n`);
 }
 
 function assertJsonOk(stdout, label) {

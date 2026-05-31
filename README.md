@@ -53,6 +53,7 @@ npm --prefix agentdispatch-docs run status:release
 ```
 
 It reports repo cleanliness, commits ahead of `origin/main`, local launch gates, and whether a live AWS evidence report exists.
+If `AGENTDISPATCH_LOCAL_E2E_REPORT`, `AGENTDISPATCH_NPM_STATUS_REPORT`, `AGENTDISPATCH_SECURITY_REPORT`, or `AGENTDISPATCH_PUBLISHED_SMOKE_REPORT` point at retained JSON reports, it also shows which launch evidence has actually been kept.
 
 To compare local package versions with npm before publishing:
 
@@ -60,10 +61,24 @@ To compare local package versions with npm before publishing:
 npm --prefix agentdispatch-docs run status:npm
 ```
 
+To keep that evidence for `status:release`:
+
+```bash
+AGENTDISPATCH_NPM_STATUS_REPORT=./agentdispatch-npm-status-report.json \
+npm --prefix agentdispatch-docs run status:npm
+```
+
 To audit high and critical npm vulnerabilities across the workspace:
 
 ```bash
 npm --prefix agentdispatch-docs run status:security
+```
+
+To keep that evidence for `status:release`:
+
+```bash
+AGENTDISPATCH_SECURITY_REPORT=./agentdispatch-security-audit-report.json \
+npm --prefix agentdispatch-docs run status:security -- --strict
 ```
 
 AgentDispatch gives lead agents one stable way to hand off long-running work:

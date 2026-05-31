@@ -185,6 +185,15 @@ const localE2eScript = await readFile(join(docsRoot, "scripts", "verify-local-e2
 mustInclude(localE2eScript, "status:release", "scripts/verify-local-e2e.sh", "runs release status");
 mustInclude(localE2eScript, "AGENTDISPATCH_LOCAL_E2E_REPORT", "scripts/verify-local-e2e.sh", "writes optional local E2E evidence report");
 
+const npmStatusScript = await readFile(join(docsRoot, "scripts", "check-npm-version-drift.mjs"), "utf8");
+mustInclude(npmStatusScript, "AGENTDISPATCH_NPM_STATUS_REPORT", "scripts/check-npm-version-drift.mjs", "writes optional npm evidence report");
+
+const securityAuditEvidenceScript = await readFile(join(docsRoot, "scripts", "check-security-audit.mjs"), "utf8");
+mustInclude(securityAuditEvidenceScript, "AGENTDISPATCH_SECURITY_REPORT", "scripts/check-security-audit.mjs", "writes optional security evidence report");
+
+const publishedSmokeScript = await readFile(join(docsRoot, "scripts", "smoke-published-packages.mjs"), "utf8");
+mustInclude(publishedSmokeScript, "AGENTDISPATCH_PUBLISHED_SMOKE_REPORT", "scripts/smoke-published-packages.mjs", "writes optional published canary evidence report");
+
 const docsReadme = await readFile(join(docsRoot, "README.md"), "utf8");
 mustInclude(docsReadme, "./docs/live-aws-verification.md", "README.md", "links live AWS verification runbook");
 mustInclude(docsReadme, "./docs/verification-matrix.md", "README.md", "links verification matrix");
@@ -268,6 +277,9 @@ for (const expected of [
   "status:npm",
   "smoke:published",
   "status:security",
+  "AGENTDISPATCH_NPM_STATUS_REPORT",
+  "AGENTDISPATCH_SECURITY_REPORT",
+  "AGENTDISPATCH_PUBLISHED_SMOKE_REPORT",
   "AGENTDISPATCH_LIVE_DISPATCH=1",
   "Live AWS dispatch verified against a real AgentCore runtime",
   "Do not commit account-specific live AWS reports"

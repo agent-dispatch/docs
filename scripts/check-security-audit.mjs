@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { execFileSync } from "node:child_process";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -42,6 +42,10 @@ const report = {
   results,
   summary
 };
+
+if (process.env.AGENTDISPATCH_SECURITY_REPORT) {
+  writeJsonReport(process.env.AGENTDISPATCH_SECURITY_REPORT, report);
+}
 
 if (args.has("--json")) {
   process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);
@@ -174,4 +178,10 @@ function printHuman(report) {
 
 function sum(results, key) {
   return results.reduce((total, result) => total + Number(result.vulnerabilities[key] ?? 0), 0);
+}
+
+function writeJsonReport(path, reportPayload) {
+  const reportPath = resolve(path);
+  mkdirSync(dirname(reportPath), { recursive: true });
+  writeFileSync(reportPath, `${JSON.stringify(reportPayload, null, 2)}\n`);
 }

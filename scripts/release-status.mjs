@@ -28,6 +28,9 @@ const missingRepos = repoStatuses.filter((repo) => !repo.exists);
 const dirtyRepos = repoStatuses.filter((repo) => repo.dirty.length > 0);
 const aheadRepos = repoStatuses.filter((repo) => repo.ahead > 0);
 const localE2eReport = inspectLocalE2eReport();
+const publishedSmokeReport = inspectPublishedSmokeReport();
+const npmStatusReport = inspectNpmStatusReport();
+const securityReport = inspectSecurityReport();
 const liveReport = inspectLiveReport();
 
 const status = {
@@ -44,21 +47,24 @@ const status = {
     },
     {
       name: "published-canary",
-      status: "manual",
+      status: publishedSmokeReport.verified ? "ok" : "manual",
       command: "npm --prefix agentdispatch-docs run smoke:published",
+      evidenceCommand: "AGENTDISPATCH_PUBLISHED_SMOKE_REPORT=./agentdispatch-published-smoke-report.json npm --prefix agentdispatch-docs run smoke:published",
       proves: "public npm install, imports, CLI binary, and MCP binary"
     },
     {
       name: "npm-version-drift",
-      status: "manual",
+      status: npmStatusReport.verified ? "ok" : npmStatusReport.present ? "warn" : "manual",
       command: "npm --prefix agentdispatch-docs run status:npm",
+      evidenceCommand: "AGENTDISPATCH_NPM_STATUS_REPORT=./agentdispatch-npm-status-report.json npm --prefix agentdispatch-docs run status:npm",
       proves: "local package versions compared with currently published npm versions"
     },
     {
       name: "security-audit",
-      status: "manual",
+      status: securityReport.verified ? "ok" : securityReport.present ? "warn" : "manual",
       command: "npm --prefix agentdispatch-docs run status:security",
       strictCommand: "npm --prefix agentdispatch-docs run status:security -- --strict",
+      evidenceCommand: "AGENTDISPATCH_SECURITY_REPORT=./agentdispatch-security-audit-report.json npm --prefix agentdispatch-docs run status:security -- --strict",
       proves: "npm audit high/critical vulnerability status across the multi-repo workspace"
     },
     {
@@ -80,12 +86,19 @@ const status = {
     dirtyRepos: dirtyRepos.length,
     reposAheadOfOrigin: aheadRepos.length,
     localE2eReportFound: localE2eReport.verified,
+    publishedSmokeReportFound: publishedSmokeReport.verified,
+    npmStatusReportFound: npmStatusReport.verified,
+    npmPendingPublish: npmStatusReport.pendingPublish,
+    securityReportFound: securityReport.verified,
     liveAwsPreflightVerified: liveReport.preflightVerified,
     liveAwsDispatchVerified: liveReport.dispatchVerified,
     readyForLocalLaunchClaim: missingRepos.length === 0 && dirtyRepos.length === 0,
     readyForLiveAwsDispatchClaim: liveReport.dispatchVerified
   },
   localE2eReport,
+  publishedSmokeReport,
+  npmStatusReport,
+  securityReport,
   liveReport
 };
 
@@ -157,6 +170,130 @@ function inspectLocalE2eReport() {
   };
 }
 
+function inspectPublishedSmokeReport() {
+  const candidates = [
+    process.env.AGENTDISPATCH_PUBLISHED_SMOKE_REPORT,
+    join(workspaceRoot, "agentdispatch-published-smoke-report.json"),
+    join(docsRoot, "agentdispatch-published-smoke-report.json")
+  ].filter(Boolean);
+
+  for (const candidate of candidates) {
+    const reportPath = resolve(candidate);
+    if (!existsSync(reportPath)) continue;
+    try {
+      const report = JSON.parse(readFileSync(reportPath, "utf8"));
+      return {
+        path: reportPath,
+        present: true,
+        generatedAt: report.generatedAt ?? null,
+        verified: report.ok === true,
+        versions: report.versions ?? null
+      };
+    } catch (error) {
+      return {
+        path: reportPath,
+        present: true,
+        parseError: error.message,
+        verified: false
+      };
+    }
+  }
+
+  return {
+    path: resolve(candidates[0] ?? join(workspaceRoot, "agentdispatch-published-smoke-report.json")),
+    present: false,
+    verified: false
+  };
+}
+
+function inspectNpmStatusReport() {
+  const candidates = [
+    process.env.AGENTDISPATCH_NPM_STATUS_REPORT,
+    join(workspaceRoot, "agentdispatch-npm-status-report.json"),
+    join(docsRoot, "agentdispatch-npm-status-report.json")
+  ].filter(Boolean);
+
+  for (const candidate of candidates) {
+    const reportPath = resolve(candidate);
+    if (!existsSync(reportPath)) continue;
+    try {
+      const report = JSON.parse(readFileSync(reportPath, "utf8"));
+      const summary = report.summary ?? {};
+      const localBehindNpm = Number(summary.localBehindNpm ?? 0);
+      const missingOnNpm = Number(summary.missingOnNpm ?? 0);
+      const checkFailed = Number(summary.checkFailed ?? 0);
+      return {
+        path: reportPath,
+        present: true,
+        checkedAt: report.checkedAt ?? null,
+        verified: localBehindNpm === 0 && missingOnNpm === 0 && checkFailed === 0,
+        pendingPublish: Number(summary.pendingPublish ?? 0),
+        synced: Number(summary.synced ?? 0),
+        localBehindNpm,
+        missingOnNpm,
+        checkFailed
+      };
+    } catch (error) {
+      return {
+        path: reportPath,
+        present: true,
+        parseError: error.message,
+        verified: false,
+        pendingPublish: 0
+      };
+    }
+  }
+
+  return {
+    path: resolve(candidates[0] ?? join(workspaceRoot, "agentdispatch-npm-status-report.json")),
+    present: false,
+    verified: false,
+    pendingPublish: 0
+  };
+}
+
+function inspectSecurityReport() {
+  const candidates = [
+    process.env.AGENTDISPATCH_SECURITY_REPORT,
+    join(workspaceRoot, "agentdispatch-security-audit-report.json"),
+    join(docsRoot, "agentdispatch-security-audit-report.json")
+  ].filter(Boolean);
+
+  for (const candidate of candidates) {
+    const reportPath = resolve(candidate);
+    if (!existsSync(reportPath)) continue;
+    try {
+      const report = JSON.parse(readFileSync(reportPath, "utf8"));
+      const summary = report.summary ?? {};
+      const high = Number(summary.high ?? 0);
+      const critical = Number(summary.critical ?? 0);
+      const checkFailed = Number(summary.checkFailed ?? 0);
+      return {
+        path: reportPath,
+        present: true,
+        checkedAt: report.checkedAt ?? null,
+        verified: high === 0 && critical === 0 && checkFailed === 0,
+        high,
+        critical,
+        checkFailed
+      };
+    } catch (error) {
+      return {
+        path: reportPath,
+        present: true,
+        parseError: error.message,
+        verified: false
+      };
+    }
+  }
+
+  return {
+    path: resolve(candidates[0] ?? join(workspaceRoot, "agentdispatch-security-audit-report.json")),
+    present: false,
+    verified: false
+  };
+}
+
 function inspectLiveReport() {
   const candidates = [
     process.env.AGENTDISPATCH_LIVE_REPORT,
@@ -223,6 +360,9 @@ function printHuman(report) {
   console.log("Claim boundary");
   console.log(`- Local launch claim ready from repo state: ${yesNo(summary.readyForLocalLaunchClaim)}`);
   console.log(`- Retained local E2E report found: ${yesNo(summary.localE2eReportFound)}`);
+  console.log(`- Retained published canary report found: ${yesNo(summary.publishedSmokeReportFound)}`);
+  console.log(`- Retained npm version report found: ${yesNo(summary.npmStatusReportFound)}${summary.npmStatusReportFound ? `, pending publish: ${summary.npmPendingPublish}` : ""}`);
+  console.log(`- Retained security audit report found: ${yesNo(summary.securityReportFound)}`);
   console.log(`- Repos with unpushed commits: ${summary.reposAheadOfOrigin}`);
   console.log(`- Live AWS preflight report found: ${yesNo(summary.liveAwsPreflightVerified)}`);
   console.log(`- Live AWS dispatch claim ready: ${yesNo(summary.readyForLiveAwsDispatchClaim)}`);
@@ -236,7 +376,7 @@ function git(cwd, gitArgs) {
     return execFileSync("git", ["-C", cwd, ...gitArgs], {
       encoding: "utf8",
       stdio: ["ignore", "pipe", "ignore"]
-    }).trim();
+    }).trimEnd();
   } catch {
     return "";
   }
