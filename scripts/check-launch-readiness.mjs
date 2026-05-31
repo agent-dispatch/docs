@@ -85,6 +85,8 @@ for (const pkg of packages) {
     failures.push(`${label}: does not explain how the package fits the AgentDispatch architecture`);
   }
 
+  assertReadmeLinksWorkOnNpm(readme, packageJson, label);
+
   for (const expected of pkg.purpose) {
     mustInclude(readme, expected, label, `mentions ${expected}`);
   }
@@ -269,6 +271,32 @@ function mustIncludeArray(value, expected, label, reason) {
   if (!Array.isArray(value) || !value.includes(expected)) {
     failures.push(`${label}: missing ${JSON.stringify(expected)} (${reason})`);
   }
+}
+
+function assertReadmeLinksWorkOnNpm(readme, packageJson, label) {
+  const included = new Set([...(packageJson.files ?? []), "README.md", "LICENSE", "package.json"]);
+  for (const link of extractMarkdownLinks(readme)) {
+    if (/^(https?:|mailto:|tel:|#|data:)/i.test(link)) continue;
+    const [pathPart] = link.split("#", 1);
+    if (!pathPart) continue;
+    const normalized = pathPart.replace(/^\.\//, "");
+    const isIncluded = [...included].some((entry) => {
+      const clean = entry.replace(/\/$/, "");
+      return normalized === clean || normalized.startsWith(`${clean}/`);
+    });
+    if (!isIncluded) {
+      failures.push(`${label}: relative link ${JSON.stringify(link)} points outside package files and may break on npm`);
+    }
+  }
+}
+
+function extractMarkdownLinks(text) {
+  const links = [];
+  const inline = /!?(?<!\\)\[[^\]]*\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g;
+  for (const match of text.matchAll(inline)) links.push(match[1]);
+  const htmlHref = /href="([^"]+)"/g;
+  for (const match of text.matchAll(htmlHref)) links.push(match[1]);
+  return links;
 }
 
 async function assertSyncedAsset(source, copy) {
