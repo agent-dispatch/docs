@@ -16,10 +16,11 @@
     "agent-orchestration"
   ],
   "scripts": {
+    "lint:launch": "node scripts/check-launch-readiness.mjs",
     "lint:markdown": "markdownlint-cli2",
     "lint:links": "node scripts/check-local-links.mjs",
     "smoke:packages": "node scripts/smoke-packages.mjs",
-    "test": "npm run lint:markdown && npm run lint:links",
+    "test": "npm run lint:markdown && npm run lint:links && npm run lint:launch",
     "verify:local-e2e": "bash scripts/verify-local-e2e.sh",
     "verify:aws-live": "bash scripts/verify-aws-live.sh"
   },
