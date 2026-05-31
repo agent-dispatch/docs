@@ -179,6 +179,7 @@ mustInclude(docsReadme, "./docs/verification-matrix.md", "README.md", "links ver
 mustInclude(docsReadme, "./docs/contributor-map.md", "README.md", "links contributor map");
 mustInclude(docsReadme, "./docs/contributor-issue-bank.md", "README.md", "links contributor issue bank");
 mustInclude(docsReadme, "./docs/examples.md", "README.md", "links examples");
+mustInclude(docsReadme, "./docs/use-cases.md", "README.md", "links use cases");
 mustInclude(docsReadme, "./docs/lead-agent-prompt-kit.md", "README.md", "links lead agent prompt kit");
 mustInclude(docsReadme, "./docs/release-runbook.md", "README.md", "links release runbook");
 mustInclude(docsReadme, "./docs/release-status.md", "README.md", "links release status");
@@ -257,6 +258,7 @@ for (const expected of [
 
 const leadAgentPromptKit = await readFile(join(docsRoot, "docs", "lead-agent-prompt-kit.md"), "utf8");
 for (const expected of [
+  "./use-cases.md",
   "Claude Code",
   "Codex",
   "OpenClaw",
@@ -274,6 +276,7 @@ for (const expected of [
 
 const launchAnnouncementKit = await readFile(join(docsRoot, "docs", "launch-announcement-kit.md"), "utf8");
 mustInclude(launchAnnouncementKit, "./lead-agent-prompt-kit.md", "docs/launch-announcement-kit.md", "links lead agent prompt kit");
+mustInclude(launchAnnouncementKit, "./use-cases.md", "docs/launch-announcement-kit.md", "links use cases");
 mustInclude(launchAnnouncementKit, "./examples.md", "docs/launch-announcement-kit.md", "links examples");
 mustInclude(launchAnnouncementKit, "./contributor-issue-bank.md", "docs/launch-announcement-kit.md", "links contributor issue bank");
 mustInclude(launchAnnouncementKit, "./release-runbook.md", "docs/launch-announcement-kit.md", "links release runbook");
@@ -331,6 +334,7 @@ const examples = await readFile(join(docsRoot, "docs", "examples.md"), "utf8");
 for (const expected of [
   "Local no-cloud demo",
   "Published npm canary",
+  "./use-cases.md",
   "Lead-Agent Prompt Kit",
   "Live AWS Preflight",
   "Live AWS Dispatch",
@@ -341,6 +345,26 @@ for (const expected of [
   "Live AWS dispatch verified against a real AgentCore runtime"
 ]) {
   mustInclude(examples, expected, "docs/examples.md", `documents ${expected}`);
+}
+
+const useCases = await readFile(join(docsRoot, "docs", "use-cases.md"), "utf8");
+for (const expected of [
+  "Repository Audit",
+  "Release Readiness Check",
+  "Dependency And API Upgrade Review",
+  "Documentation And Launch Copy Review",
+  "Provider Adapter Design",
+  "Worker Framework Prototype",
+  "Long-Running Research Task",
+  "check_cloud_agent_runtime",
+  "spawn_cloud_agent",
+  "get_task_status",
+  "get_task_logs",
+  "get_task_result",
+  "AGENTDISPATCH_LIVE_DISPATCH=1",
+  "./examples.md"
+]) {
+  mustInclude(useCases, expected, "docs/use-cases.md", `documents ${expected}`);
 }
 
 if (failures.length > 0) {

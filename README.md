@@ -18,6 +18,7 @@ Documentation for AgentDispatch: the provider-neutral MCP control plane for spaw
 - [Contributor map](./docs/contributor-map.md) — where to make changes and how to choose a first contribution path.
 - [Contributor issue bank](./docs/contributor-issue-bank.md) — ready-to-open adapter, worker, and architecture issues for launch-day contributor conversion.
 - [Examples](./docs/examples.md) — no-cloud demo, npm canary, prompt kit, live AWS preflight, and live dispatch paths.
+- [Use cases](./docs/use-cases.md) — copyable background-task prompts for repo audits, release checks, adapter design, and worker prototypes.
 - [Local demo transcript](./docs/local-demo-transcript.md) — short copyable terminal path for a launch demo without live AWS credentials.
 - [Verification matrix](./docs/verification-matrix.md) — what local E2E proves, what live AWS proves, and what not to claim.
 - [Live AWS verification](./docs/live-aws-verification.md) — opt-in AgentCore preflight and real-dispatch proof path.

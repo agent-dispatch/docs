@@ -4,6 +4,8 @@ Use this kit to connect Claude Code, Codex, OpenClaw, Hermes, or any MCP-capable
 
 Do not claim live AWS dispatch is verified unless `AGENTDISPATCH_LIVE_DISPATCH=1` or an equivalent live `spawn_cloud_agent` call has succeeded against a real AgentCore runtime.
 
+For task-specific prompts, use the [Use cases](./use-cases.md) playbook.
+
 ## MCP Setup
 
 Create an AgentDispatch config first:

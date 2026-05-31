@@ -8,6 +8,7 @@ Use this page to choose the right AgentDispatch demo path. The examples are orde
 | --- | --- | --- |
 | Local no-cloud demo | No | CLI config, `doctor`, MCP server startup, and the `spawn_cloud_agent` handoff shape. |
 | Published npm canary | No | Public package install, imports, CLI binary, and MCP binary. |
+| Use-case playbook | No | Copyable task prompts for common background-agent workflows. |
 | Lead-agent prompt kit | No | Copy-paste prompts for Claude Code, Codex, OpenClaw, Hermes, and MCP-capable agents. |
 | Live AWS preflight | Yes | AWS credentials, region, runtime reachability, and adapter-owned preflight. |
 | Live AWS dispatch | Yes | A real cloud task submitted to an AgentCore runtime. |
@@ -49,6 +50,8 @@ Claim boundary:
 ## Lead-Agent Prompt Kit
 
 Use the [lead agent prompt kit](./lead-agent-prompt-kit.md) when testing AgentDispatch through a real MCP-capable lead agent.
+
+For concrete tasks to delegate, use the [use-case playbook](./use-cases.md).
 
 Recommended first prompt:
 
@@ -114,6 +117,7 @@ This summarizes repo cleanliness, commits ahead of `origin/main`, launch gates, 
 
 - [Verification matrix](./verification-matrix.md)
 - [Live AWS verification](./live-aws-verification.md)
+- [Use cases](./use-cases.md)
 - [Release status](./release-status.md)
 - [Release runbook](./release-runbook.md)
 - [Contributor issue bank](./contributor-issue-bank.md)
