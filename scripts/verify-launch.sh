@@ -20,6 +20,7 @@ publish_dry_run_report="$evidence_dir/agentdispatch-publish-dry-run-report.json"
 security_report="$evidence_dir/agentdispatch-security-audit-report.json"
 published_smoke_report="$evidence_dir/agentdispatch-published-smoke-report.json"
 release_status_report="$evidence_dir/agentdispatch-release-status.json"
+launch_summary_report="$evidence_dir/agentdispatch-launch-summary.md"
 
 run_step() {
   printf '\n===== %s =====\n' "$*" >&2
@@ -88,6 +89,11 @@ for report in \
   assert_json_report "$report"
 done
 
+run_step env \
+  AGENTDISPATCH_LAUNCH_EVIDENCE_DIR="$evidence_dir" \
+  AGENTDISPATCH_LAUNCH_SUMMARY_REPORT="$launch_summary_report" \
+  npm --prefix "$docs_root" run status:launch-summary
+
 echo
 echo "Launch verification evidence written to:"
 echo "$evidence_dir"
@@ -99,4 +105,5 @@ printf -- '- %s\n' \
   "$publish_dry_run_report" \
   "$security_report" \
   "$published_smoke_report" \
-  "$release_status_report"
+  "$release_status_report" \
+  "$launch_summary_report"

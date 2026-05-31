@@ -98,4 +98,5 @@ jobs:
             agentdispatch-security-audit-report.json
             agentdispatch-published-smoke-report.json
             agentdispatch-release-status.json
+            agentdispatch-launch-summary.md
           if-no-files-found: error

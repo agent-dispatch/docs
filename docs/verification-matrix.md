@@ -25,6 +25,12 @@ For a quick release dashboard before or after the full gate, run:
 npm --prefix agentdispatch-docs run status:release
 ```
 
+To render retained evidence as a Markdown summary for launch review, run:
+
+```bash
+npm --prefix agentdispatch-docs run status:launch-summary
+```
+
 That status command reports local repo cleanliness, commits ahead of `origin/main`, launch gate commands, and whether a live AWS verification report exists. It does not replace `verify:local-e2e`, `smoke:published`, or `verify:aws-live`.
 
 That gate verifies:

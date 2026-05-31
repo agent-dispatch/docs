@@ -121,6 +121,7 @@ Run from docs:
 
 ```bash
 npm run status:release
+npm run status:launch-summary
 npm run status:npm
 npm run status:publish
 npm run status:security

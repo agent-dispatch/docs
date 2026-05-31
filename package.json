@@ -24,6 +24,7 @@
     "smoke:packages": "node scripts/smoke-packages.mjs",
     "smoke:published": "node scripts/smoke-published-packages.mjs",
     "status:publish": "node scripts/check-publish-dry-run.mjs",
+    "status:launch-summary": "node scripts/render-launch-summary.mjs",
     "status:security": "node scripts/check-security-audit.mjs",
     "status:npm": "node scripts/check-npm-version-drift.mjs",
     "status:release": "node scripts/release-status.mjs",

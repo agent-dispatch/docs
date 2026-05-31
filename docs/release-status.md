@@ -100,6 +100,13 @@ AGENTDISPATCH_LAUNCH_EVIDENCE_DIR=./agentdispatch-launch-evidence \
 npm --prefix agentdispatch-docs run verify:launch
 ```
 
+To render the retained evidence as Markdown for release notes or review:
+
+```bash
+AGENTDISPATCH_LAUNCH_EVIDENCE_DIR=./agentdispatch-launch-evidence \
+npm --prefix agentdispatch-docs run status:launch-summary
+```
+
 For live AWS preflight:
 
 ```bash
