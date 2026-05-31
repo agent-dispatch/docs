@@ -315,6 +315,7 @@ for (const expected of [
   ".agentdispatch-workspace/agentdispatch-core",
   ".agentdispatch-workspace/agentdispatch-website",
   ".agentdispatch-workspace/agentdispatch-github-profile",
+  "Mirror approved org assets into website checkout",
   "AGENTDISPATCH_WORKSPACE_ROOT",
   "npm test"
 ]) {

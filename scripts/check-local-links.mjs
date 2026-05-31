@@ -37,7 +37,7 @@ console.log(`Checked ${markdownFiles.length} Markdown files for local links.`);
 function collectMarkdown(dir) {
   const files = [];
   for (const entry of readdirSync(dir)) {
-    if (entry === ".git" || entry === "node_modules") continue;
+    if (entry === ".git" || entry === "node_modules" || entry === ".agentdispatch-workspace") continue;
     const path = join(dir, entry);
     const stats = statSync(path);
     if (stats.isDirectory()) files.push(...collectMarkdown(path));
