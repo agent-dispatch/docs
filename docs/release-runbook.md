@@ -26,6 +26,14 @@ AGENTDISPATCH_VERIFY_INSTALL=1 npm --prefix agentdispatch-docs run verify:local-
 
 This proves package installs, tests, typechecks, builds, package tarball consumption, CLI bootstrap, MCP server startup, docs validation, profile assets, and website validation against the current workspace.
 
+For launch notes, retain a local evidence report:
+
+```bash
+AGENTDISPATCH_VERIFY_INSTALL=1 \
+AGENTDISPATCH_LOCAL_E2E_REPORT=./agentdispatch-local-e2e-report.json \
+npm --prefix agentdispatch-docs run verify:local-e2e
+```
+
 Then record the release status summary:
 
 ```bash

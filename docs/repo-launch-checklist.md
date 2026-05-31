@@ -23,6 +23,7 @@ Use this checklist before a public push, announcement, or launch post. The goal 
 
 - Use the [Examples](./examples.md) index to choose the right no-cloud, npm canary, prompt-kit, live preflight, or live dispatch path.
 - Include the copyable [local demo transcript](./local-demo-transcript.md) for launch posts and README links when a recorded demo is not available yet.
+- Retain the [launch evidence](./launch-evidence.md) artifacts before posting claims.
 - Include the [lead agent prompt kit](./lead-agent-prompt-kit.md) so Claude Code, Codex, OpenClaw, Hermes, and other MCP users can try AgentDispatch from copy-paste prompts.
 - Run `npm --prefix agentdispatch-docs run demo:local` before recording or posting the demo.
 - Record a short terminal demo:
@@ -98,6 +99,14 @@ npm --prefix agentdispatch-docs run verify:local-e2e
 ```
 
 That gate checks the GitHub org image assets, runs every package test/typecheck/build, packs the publishable packages into a temporary consumer project, and exercises the built CLI plus MCP server with a generated local config.
+
+For launch evidence, keep a JSON report:
+
+```bash
+AGENTDISPATCH_VERIFY_INSTALL=1 \
+AGENTDISPATCH_LOCAL_E2E_REPORT=./agentdispatch-local-e2e-report.json \
+npm --prefix agentdispatch-docs run verify:local-e2e
+```
 
 Run from each package repo:
 

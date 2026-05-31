@@ -160,7 +160,7 @@ For a deterministic terminal path before recording, run `npm --prefix agentdispa
 
 For a single menu of no-cloud, npm, prompt-kit, live preflight, and live dispatch demo paths, use the [examples index](./examples.md).
 
-Before publishing the post, run `npm --prefix agentdispatch-docs run status:release` so the launch claim matches the local repo state and live AWS evidence boundary.
+Before publishing the post, use the [launch evidence](./launch-evidence.md) workflow to retain the local E2E report, release status JSON, npm evidence, and any live AWS report. At minimum, run `npm --prefix agentdispatch-docs run status:release` so the launch claim matches the local repo state and live AWS evidence boundary.
 
 For copy-paste prompts that work across Claude Code, Codex, OpenClaw, Hermes, and any MCP-capable agent, use the [lead agent prompt kit](./lead-agent-prompt-kit.md).
 
@@ -187,6 +187,7 @@ Avoid these claims unless live evidence exists:
 - MCP server: <https://github.com/agent-dispatch/mcp-server>
 - CLI: <https://github.com/agent-dispatch/cli>
 - Docs: <https://github.com/agent-dispatch/docs>
+- Launch evidence: <https://github.com/agent-dispatch/docs/blob/main/docs/launch-evidence.md>
 - Release runbook: <https://github.com/agent-dispatch/docs/blob/main/docs/release-runbook.md>
 - Local demo transcript: <https://github.com/agent-dispatch/docs/blob/main/docs/local-demo-transcript.md>
 - Lead agent prompt kit: <https://github.com/agent-dispatch/docs/blob/main/docs/lead-agent-prompt-kit.md>

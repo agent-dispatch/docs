@@ -22,6 +22,7 @@ Documentation for AgentDispatch: the provider-neutral MCP control plane for spaw
 - [Local demo transcript](./docs/local-demo-transcript.md) — short copyable terminal path for a launch demo without live AWS credentials.
 - [Verification matrix](./docs/verification-matrix.md) — what local E2E proves, what live AWS proves, and what not to claim.
 - [Live AWS verification](./docs/live-aws-verification.md) — opt-in AgentCore preflight and real-dispatch proof path.
+- [Launch evidence](./docs/launch-evidence.md) — retain local E2E, release status, npm, and live AWS proof artifacts before public claims.
 - [Release runbook](./docs/release-runbook.md) — release order, npm Trusted Publisher setup, provenance, and package publish gates.
 - [Release status](./docs/release-status.md) — one local command for repo cleanliness, unpushed commits, launch gates, and live AWS evidence state.
 - [Launch announcement kit](./docs/launch-announcement-kit.md) — copy for GitHub, X, LinkedIn, Hacker News, Reddit, and demo narration.

@@ -27,6 +27,7 @@ const repoStatuses = repos.map((repo) => inspectRepo(repo));
 const missingRepos = repoStatuses.filter((repo) => !repo.exists);
 const dirtyRepos = repoStatuses.filter((repo) => repo.dirty.length > 0);
 const aheadRepos = repoStatuses.filter((repo) => repo.ahead > 0);
+const localE2eReport = inspectLocalE2eReport();
 const liveReport = inspectLiveReport();
 
 const status = {
@@ -36,8 +37,9 @@ const status = {
   gates: [
     {
       name: "local-e2e",
-      status: "manual",
+      status: localE2eReport.verified ? "ok" : "manual",
       command: "AGENTDISPATCH_VERIFY_INSTALL=1 npm --prefix agentdispatch-docs run verify:local-e2e",
+      evidenceCommand: "AGENTDISPATCH_VERIFY_INSTALL=1 AGENTDISPATCH_LOCAL_E2E_REPORT=./agentdispatch-local-e2e-report.json npm --prefix agentdispatch-docs run verify:local-e2e",
       proves: "local package graph, tests, typechecks, builds, packaged smoke, CLI init/doctor, MCP check, docs, profile, and website"
     },
     {
@@ -70,11 +72,13 @@ const status = {
     missingRepos: missingRepos.length,
     dirtyRepos: dirtyRepos.length,
     reposAheadOfOrigin: aheadRepos.length,
+    localE2eReportFound: localE2eReport.verified,
     liveAwsPreflightVerified: liveReport.preflightVerified,
     liveAwsDispatchVerified: liveReport.dispatchVerified,
     readyForLocalLaunchClaim: missingRepos.length === 0 && dirtyRepos.length === 0,
     readyForLiveAwsDispatchClaim: liveReport.dispatchVerified
   },
+  localE2eReport,
   liveReport
 };
 
@@ -106,6 +110,43 @@ function inspectRepo(repo) {
     dirty: exists ? lines(git(repoPath, ["status", "--short"])) : [],
     ahead: exists ? Number(git(repoPath, ["rev-list", "--count", "origin/main..HEAD"]) || 0) : 0,
     head: exists ? git(repoPath, ["log", "--oneline", "-1"]) : null
+  };
+}
+
+function inspectLocalE2eReport() {
+  const candidates = [
+    process.env.AGENTDISPATCH_LOCAL_E2E_REPORT,
+    join(workspaceRoot, "agentdispatch-local-e2e-report.json"),
+    join(docsRoot, "agentdispatch-local-e2e-report.json")
+  ].filter(Boolean);
+
+  for (const candidate of candidates) {
+    const reportPath = resolve(candidate);
+    if (!existsSync(reportPath)) continue;
+    try {
+      const report = JSON.parse(readFileSync(reportPath, "utf8"));
+      const claim = String(report.claim ?? "");
+      return {
+        path: reportPath,
+        present: true,
+        generatedAt: report.generatedAt ?? null,
+        claim,
+        verified: report.ok === true && claim.includes("Local AgentDispatch end-to-end verification passed")
+      };
+    } catch (error) {
+      return {
+        path: reportPath,
+        present: true,
+        parseError: error.message,
+        verified: false
+      };
+    }
+  }
+
+  return {
+    path: resolve(candidates[0] ?? join(workspaceRoot, "agentdispatch-local-e2e-report.json")),
+    present: false,
+    verified: false
   };
 }
 
@@ -174,6 +215,7 @@ function printHuman(report) {
   console.log("");
   console.log("Claim boundary");
   console.log(`- Local launch claim ready from repo state: ${yesNo(summary.readyForLocalLaunchClaim)}`);
+  console.log(`- Retained local E2E report found: ${yesNo(summary.localE2eReportFound)}`);
   console.log(`- Repos with unpushed commits: ${summary.reposAheadOfOrigin}`);
   console.log(`- Live AWS preflight report found: ${yesNo(summary.liveAwsPreflightVerified)}`);
   console.log(`- Live AWS dispatch claim ready: ${yesNo(summary.readyForLiveAwsDispatchClaim)}`);

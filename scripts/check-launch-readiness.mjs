@@ -172,10 +172,12 @@ for (const expected of [
 
 const localE2eScript = await readFile(join(docsRoot, "scripts", "verify-local-e2e.sh"), "utf8");
 mustInclude(localE2eScript, "status:release", "scripts/verify-local-e2e.sh", "runs release status");
+mustInclude(localE2eScript, "AGENTDISPATCH_LOCAL_E2E_REPORT", "scripts/verify-local-e2e.sh", "writes optional local E2E evidence report");
 
 const docsReadme = await readFile(join(docsRoot, "README.md"), "utf8");
 mustInclude(docsReadme, "./docs/live-aws-verification.md", "README.md", "links live AWS verification runbook");
 mustInclude(docsReadme, "./docs/verification-matrix.md", "README.md", "links verification matrix");
+mustInclude(docsReadme, "./docs/launch-evidence.md", "README.md", "links launch evidence");
 mustInclude(docsReadme, "./docs/contributor-map.md", "README.md", "links contributor map");
 mustInclude(docsReadme, "./docs/contributor-issue-bank.md", "README.md", "links contributor issue bank");
 mustInclude(docsReadme, "./docs/examples.md", "README.md", "links examples");
@@ -231,6 +233,7 @@ for (const expected of [
 const verificationMatrix = await readFile(join(docsRoot, "docs", "verification-matrix.md"), "utf8");
 for (const expected of [
   "./examples.md",
+  "./launch-evidence.md",
   "verify:local-e2e",
   "smoke:published",
   "status:release",
@@ -241,6 +244,19 @@ for (const expected of [
   "actions/workflows/local-e2e.yml"
 ]) {
   mustInclude(verificationMatrix, expected, "docs/verification-matrix.md", `documents ${expected}`);
+}
+
+const launchEvidence = await readFile(join(docsRoot, "docs", "launch-evidence.md"), "utf8");
+for (const expected of [
+  "AGENTDISPATCH_LOCAL_E2E_REPORT=./agentdispatch-local-e2e-report.json",
+  "agentdispatch-release-status.json",
+  "status:npm",
+  "smoke:published",
+  "AGENTDISPATCH_LIVE_DISPATCH=1",
+  "Live AWS dispatch verified against a real AgentCore runtime",
+  "Do not commit account-specific live AWS reports"
+]) {
+  mustInclude(launchEvidence, expected, "docs/launch-evidence.md", `documents ${expected}`);
 }
 
 const liveAwsVerification = await readFile(join(docsRoot, "docs", "live-aws-verification.md"), "utf8");
@@ -277,6 +293,7 @@ for (const expected of [
 
 const launchAnnouncementKit = await readFile(join(docsRoot, "docs", "launch-announcement-kit.md"), "utf8");
 mustInclude(launchAnnouncementKit, "./lead-agent-prompt-kit.md", "docs/launch-announcement-kit.md", "links lead agent prompt kit");
+mustInclude(launchAnnouncementKit, "./launch-evidence.md", "docs/launch-announcement-kit.md", "links launch evidence");
 mustInclude(launchAnnouncementKit, "./use-cases.md", "docs/launch-announcement-kit.md", "links use cases");
 mustInclude(launchAnnouncementKit, "./examples.md", "docs/launch-announcement-kit.md", "links examples");
 mustInclude(launchAnnouncementKit, "./contributor-issue-bank.md", "docs/launch-announcement-kit.md", "links contributor issue bank");
@@ -288,6 +305,7 @@ const releaseRunbook = await readFile(join(docsRoot, "docs", "release-runbook.md
 for (const expected of [
   "Release Order",
   "Trusted Publisher",
+  "AGENTDISPATCH_LOCAL_E2E_REPORT",
   "smoke:published",
   "status:release",
   "status:npm",
@@ -310,6 +328,7 @@ mustInclude(packageConsumption, "status:npm", "docs/package-consumption.md", "do
 
 const launchChecklist = await readFile(join(docsRoot, "docs", "repo-launch-checklist.md"), "utf8");
 mustInclude(launchChecklist, "./examples.md", "docs/repo-launch-checklist.md", "links examples");
+mustInclude(launchChecklist, "./launch-evidence.md", "docs/repo-launch-checklist.md", "links launch evidence");
 mustInclude(launchChecklist, "./verification-matrix.md", "docs/repo-launch-checklist.md", "links verification matrix");
 mustInclude(launchChecklist, "./contributor-issue-bank.md", "docs/repo-launch-checklist.md", "links contributor issue bank");
 mustInclude(launchChecklist, "./live-aws-verification.md", "docs/repo-launch-checklist.md", "links live AWS runbook");
@@ -319,6 +338,7 @@ mustInclude(launchChecklist, "./release-status.md", "docs/repo-launch-checklist.
 mustInclude(launchChecklist, "demo:local", "docs/repo-launch-checklist.md", "runs executable local demo");
 mustInclude(launchChecklist, "status:release", "docs/repo-launch-checklist.md", "runs release status");
 mustInclude(launchChecklist, "status:npm", "docs/repo-launch-checklist.md", "runs npm status");
+mustInclude(launchChecklist, "AGENTDISPATCH_LOCAL_E2E_REPORT", "docs/repo-launch-checklist.md", "captures local E2E report");
 mustInclude(launchChecklist, "npm run smoke:published", "docs/repo-launch-checklist.md", "runs published package smoke");
 mustInclude(launchChecklist, "AGENTDISPATCH_LIVE_REPORT", "docs/repo-launch-checklist.md", "captures live AWS report path");
 
@@ -326,6 +346,8 @@ const releaseStatus = await readFile(join(docsRoot, "docs", "release-status.md")
 for (const expected of [
   "status:release",
   "status:npm",
+  "Retained local E2E report found",
+  "AGENTDISPATCH_LOCAL_E2E_REPORT",
   "--json",
   "--strict",
   "origin/main",

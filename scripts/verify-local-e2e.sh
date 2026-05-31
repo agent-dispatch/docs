@@ -168,6 +168,68 @@ printf '\n===== MCP server check JSON =====\n'
 node "$workspace_root/agentdispatch-mcp-server/dist/bin.js" --config "$config" --check > "$mcp_output"
 node -e "const report = require(process.argv[1]); if (report.ok !== true) throw new Error('MCP check did not return ok:true');" "$mcp_output"
 
+if [[ -n "${AGENTDISPATCH_LOCAL_E2E_REPORT:-}" ]]; then
+  node - "$AGENTDISPATCH_LOCAL_E2E_REPORT" "$workspace_root" <<'NODE'
+const fs = require("node:fs");
+const path = require("node:path");
+
+const [reportPath, workspaceRoot] = process.argv.slice(2);
+const packages = [
+  "agentdispatch-core",
+  "agentdispatch-store-sqlite",
+  "agentdispatch-adapter-aws-agentcore",
+  "agentdispatch-worker-agentcore",
+  "agentdispatch-sdk-js",
+  "agentdispatch-mcp-server",
+  "agentdispatch-cli",
+  "agentdispatch-adapter-template",
+  "agentdispatch-docs",
+  "agentdispatch-github-profile",
+  "agentdispatch-website"
+].map((repo) => {
+  const packageJson = JSON.parse(fs.readFileSync(path.join(workspaceRoot, repo, "package.json"), "utf8"));
+  return {
+    repo,
+    packageName: packageJson.name,
+    version: packageJson.version,
+    private: packageJson.private === true
+  };
+});
+
+const report = {
+  generatedAt: new Date().toISOString(),
+  workspaceRoot,
+  ok: true,
+  claim: "Local AgentDispatch end-to-end verification passed without live AWS dispatch.",
+  command: "AGENTDISPATCH_VERIFY_INSTALL=1 AGENTDISPATCH_LOCAL_E2E_REPORT=<path> npm --prefix agentdispatch-docs run verify:local-e2e",
+  coverage: [
+    "package installs",
+    "unit tests",
+    "typechecks",
+    "builds",
+    "local package tarball consumption",
+    "CLI init",
+    "CLI doctor",
+    "MCP server check",
+    "docs validation",
+    "GitHub profile asset validation",
+    "website validation and build",
+    "local demo"
+  ],
+  doesNotProve: [
+    "live AWS AgentCore preflight",
+    "live AWS AgentCore dispatch",
+    "published npm versions for unpublished local changes"
+  ],
+  packages
+};
+
+fs.mkdirSync(path.dirname(reportPath), { recursive: true });
+fs.writeFileSync(reportPath, `${JSON.stringify(report, null, 2)}\n`);
+NODE
+  echo "Wrote local E2E evidence report: $AGENTDISPATCH_LOCAL_E2E_REPORT"
+fi
+
 echo
 echo "AgentDispatch local end-to-end verification passed."
 echo "Note: live AWS AgentCore dispatch is intentionally not run by this local gate."

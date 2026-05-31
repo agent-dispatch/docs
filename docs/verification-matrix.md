@@ -9,6 +9,7 @@ Public status badges:
 - [Live AWS Verification](https://github.com/agent-dispatch/docs/actions/workflows/live-aws-verification.yml)
 
 Use [Examples](./examples.md) to choose the right no-cloud, published npm, prompt-kit, live preflight, or live dispatch path before making a public claim.
+Use [Launch evidence](./launch-evidence.md) to retain JSON reports and command outputs for the claims you publish.
 
 ## Current Local Proof
 
@@ -41,6 +42,7 @@ That gate verifies:
 | Launch assets | Checks GitHub profile artwork, social preview dimensions, website validation, profile validation, and docs launch checks. |
 | Release readiness | Checks package metadata, CI workflows, provenance publish workflows, and per-package release docs. |
 | Release status | `status:release` summarizes repo cleanliness, unpushed commits, launch gates, and live AWS evidence state. |
+| Retained local evidence | `AGENTDISPATCH_LOCAL_E2E_REPORT=./agentdispatch-local-e2e-report.json` writes a JSON record for launch notes. |
 
 ## Live Cloud Proof
 
