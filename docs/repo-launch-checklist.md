@@ -111,6 +111,7 @@ Run from docs:
 
 ```bash
 npm run status:release
+npm run status:npm
 npm test
 npm run smoke:packages
 npm run smoke:published

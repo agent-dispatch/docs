@@ -91,6 +91,15 @@ That smoke installs the current npm versions of the public `@agent-dispatch/*` p
 
 This check intentionally uses the compatibility-minimal `agentdispatch init` flags supported by the currently published CLI. New local CLI flags, such as protocol-specific setup, are covered by `verify:local-e2e` until the next package release reaches npm.
 
+Before publishing, compare local public package versions with npm:
+
+```bash
+cd agentdispatch-docs
+npm run status:npm
+```
+
+That version-drift check reports which packages are synced, pending publication, missing on npm, or unexpectedly behind npm.
+
 ## Account Profile Config
 
 Users configure cloud accounts outside MCP calls. Raw cloud credentials are never passed through MCP.

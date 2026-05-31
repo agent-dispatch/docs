@@ -47,6 +47,12 @@ const status = {
       proves: "public npm install, imports, CLI binary, and MCP binary"
     },
     {
+      name: "npm-version-drift",
+      status: "manual",
+      command: "npm --prefix agentdispatch-docs run status:npm",
+      proves: "local package versions compared with currently published npm versions"
+    },
+    {
       name: "release-status",
       status: missingRepos.length === 0 && dirtyRepos.length === 0 ? "ok" : "warn",
       command: "npm --prefix agentdispatch-docs run status:release",

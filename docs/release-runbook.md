@@ -34,6 +34,14 @@ npm --prefix agentdispatch-docs run status:release
 
 This reports repo cleanliness, commits ahead of `origin/main`, launch gate commands, and live AWS evidence state before the announcement.
 
+Check local package versions against npm before running publish workflows:
+
+```bash
+npm --prefix agentdispatch-docs run status:npm
+```
+
+This reports which public packages are already synced with npm and which local package versions are pending publication.
+
 ## Required Published-Install Gate
 
 After the package line is published, run the registry canary:

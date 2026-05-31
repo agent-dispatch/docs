@@ -15,6 +15,14 @@ It prints a local release dashboard for the multi-repo workspace:
 - whether a live AWS verification report exists
 - whether the live AWS report proves preflight only or real dispatch
 
+Use this separate networked command to compare local public package versions against npm:
+
+```bash
+npm --prefix agentdispatch-docs run status:npm
+```
+
+`status:npm` is not part of the default local E2E gate because it depends on npm registry availability.
+
 For automation or release notes, use JSON:
 
 ```bash
@@ -35,6 +43,7 @@ It does not run tests, builds, package smoke tests, public npm canaries, or live
 
 ```bash
 AGENTDISPATCH_VERIFY_INSTALL=1 npm --prefix agentdispatch-docs run verify:local-e2e
+npm --prefix agentdispatch-docs run status:npm
 npm --prefix agentdispatch-docs run smoke:published
 ```
 

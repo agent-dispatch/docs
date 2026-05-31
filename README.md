@@ -47,6 +47,12 @@ npm --prefix agentdispatch-docs run status:release
 
 It reports repo cleanliness, commits ahead of `origin/main`, local launch gates, and whether a live AWS evidence report exists.
 
+To compare local package versions with npm before publishing:
+
+```bash
+npm --prefix agentdispatch-docs run status:npm
+```
+
 AgentDispatch gives lead agents one stable way to hand off long-running work:
 
 ```mermaid
