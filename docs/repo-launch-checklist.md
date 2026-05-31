@@ -84,6 +84,8 @@ Avoid overclaiming autonomy or production maturity. The most credible message is
 
 ## Verification Before Launch
 
+Use the [verification matrix](./verification-matrix.md) to keep local E2E, live preflight, and live dispatch claims separate.
+
 From the local multi-repo workspace, run the single production gate:
 
 ```bash

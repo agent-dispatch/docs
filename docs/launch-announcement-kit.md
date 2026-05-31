@@ -85,7 +85,7 @@ The response includes a durable task_id for status/log/result polling and cloud_
 
 V1 targets AWS Bedrock AgentCore Runtime. The contract is adapter-based from day one so GCP, Azure, Kubernetes, local runners, and workflow runners can plug in later without changing the agent-facing MCP surface.
 
-The local verification gate already tests package installs, typechecks, builds, docs/profile/website validation, package-consumption smoke tests, CLI config generation, CLI doctor, and MCP server checks. Live AWS dispatch remains explicitly opt-in because it depends on real account state and runtime ARNs.
+The local verification gate already tests package installs, typechecks, builds, docs/profile/website validation, package-consumption smoke tests, CLI config generation, CLI doctor, and MCP server checks. Live AWS dispatch remains explicitly opt-in because it depends on real account state and runtime ARNs. Use the verification matrix for exact claim boundaries.
 
 GitHub: https://github.com/agent-dispatch
 ```
@@ -164,6 +164,7 @@ Avoid these claims unless live evidence exists:
 - Do not call every future provider implemented; say the contract is ready for adapter packages.
 - Do not imply raw credentials are handled by the agent; account profiles and provider credential chains are outside MCP payloads.
 - Do not claim autonomous production maturity; the credible claim is a tested local control plane, stable MCP surface, and adapter boundary.
+- Use [Verification matrix](./verification-matrix.md) to keep local and live-cloud claims separate.
 - Use [Live AWS verification](./live-aws-verification.md) and keep its JSON evidence report before making any public live-cloud claim.
 
 ## Links

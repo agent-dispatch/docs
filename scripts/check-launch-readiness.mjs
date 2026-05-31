@@ -96,6 +96,17 @@ await assertSyncedAsset(
 
 const docsReadme = await readFile(join(docsRoot, "README.md"), "utf8");
 mustInclude(docsReadme, "./docs/live-aws-verification.md", "README.md", "links live AWS verification runbook");
+mustInclude(docsReadme, "./docs/verification-matrix.md", "README.md", "links verification matrix");
+
+const verificationMatrix = await readFile(join(docsRoot, "docs", "verification-matrix.md"), "utf8");
+for (const expected of [
+  "verify:local-e2e",
+  "verify:aws-live",
+  "AGENTDISPATCH_LIVE_DISPATCH=1",
+  "Do not use local E2E evidence as proof that live AWS dispatch works"
+]) {
+  mustInclude(verificationMatrix, expected, "docs/verification-matrix.md", `documents ${expected}`);
+}
 
 const liveAwsVerification = await readFile(join(docsRoot, "docs", "live-aws-verification.md"), "utf8");
 for (const expected of [
@@ -111,6 +122,7 @@ for (const expected of [
 }
 
 const launchChecklist = await readFile(join(docsRoot, "docs", "repo-launch-checklist.md"), "utf8");
+mustInclude(launchChecklist, "./verification-matrix.md", "docs/repo-launch-checklist.md", "links verification matrix");
 mustInclude(launchChecklist, "./live-aws-verification.md", "docs/repo-launch-checklist.md", "links live AWS runbook");
 mustInclude(launchChecklist, "AGENTDISPATCH_LIVE_REPORT", "docs/repo-launch-checklist.md", "captures live AWS report path");
 
