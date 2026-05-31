@@ -178,6 +178,7 @@ mustInclude(docsReadme, "./docs/live-aws-verification.md", "README.md", "links l
 mustInclude(docsReadme, "./docs/verification-matrix.md", "README.md", "links verification matrix");
 mustInclude(docsReadme, "./docs/contributor-map.md", "README.md", "links contributor map");
 mustInclude(docsReadme, "./docs/contributor-issue-bank.md", "README.md", "links contributor issue bank");
+mustInclude(docsReadme, "./docs/examples.md", "README.md", "links examples");
 mustInclude(docsReadme, "./docs/lead-agent-prompt-kit.md", "README.md", "links lead agent prompt kit");
 mustInclude(docsReadme, "./docs/release-runbook.md", "README.md", "links release runbook");
 mustInclude(docsReadme, "./docs/release-status.md", "README.md", "links release status");
@@ -227,6 +228,7 @@ for (const expected of [
 
 const verificationMatrix = await readFile(join(docsRoot, "docs", "verification-matrix.md"), "utf8");
 for (const expected of [
+  "./examples.md",
   "verify:local-e2e",
   "smoke:published",
   "status:release",
@@ -272,6 +274,7 @@ for (const expected of [
 
 const launchAnnouncementKit = await readFile(join(docsRoot, "docs", "launch-announcement-kit.md"), "utf8");
 mustInclude(launchAnnouncementKit, "./lead-agent-prompt-kit.md", "docs/launch-announcement-kit.md", "links lead agent prompt kit");
+mustInclude(launchAnnouncementKit, "./examples.md", "docs/launch-announcement-kit.md", "links examples");
 mustInclude(launchAnnouncementKit, "./contributor-issue-bank.md", "docs/launch-announcement-kit.md", "links contributor issue bank");
 mustInclude(launchAnnouncementKit, "./release-runbook.md", "docs/launch-announcement-kit.md", "links release runbook");
 mustInclude(launchAnnouncementKit, "demo:local", "docs/launch-announcement-kit.md", "references executable local demo");
@@ -300,6 +303,7 @@ const packageConsumption = await readFile(join(docsRoot, "docs", "package-consum
 mustInclude(packageConsumption, "smoke:published", "docs/package-consumption.md", "documents published package smoke");
 
 const launchChecklist = await readFile(join(docsRoot, "docs", "repo-launch-checklist.md"), "utf8");
+mustInclude(launchChecklist, "./examples.md", "docs/repo-launch-checklist.md", "links examples");
 mustInclude(launchChecklist, "./verification-matrix.md", "docs/repo-launch-checklist.md", "links verification matrix");
 mustInclude(launchChecklist, "./contributor-issue-bank.md", "docs/repo-launch-checklist.md", "links contributor issue bank");
 mustInclude(launchChecklist, "./live-aws-verification.md", "docs/repo-launch-checklist.md", "links live AWS runbook");
@@ -321,6 +325,22 @@ for (const expected of [
   "Live AWS dispatch verified against a real AgentCore runtime"
 ]) {
   mustInclude(releaseStatus, expected, "docs/release-status.md", `documents ${expected}`);
+}
+
+const examples = await readFile(join(docsRoot, "docs", "examples.md"), "utf8");
+for (const expected of [
+  "Local no-cloud demo",
+  "Published npm canary",
+  "Lead-Agent Prompt Kit",
+  "Live AWS Preflight",
+  "Live AWS Dispatch",
+  "npm --prefix agentdispatch-docs run demo:local",
+  "npm run smoke:published",
+  "AGENTDISPATCH_LIVE_DISPATCH=1",
+  "status:release",
+  "Live AWS dispatch verified against a real AgentCore runtime"
+]) {
+  mustInclude(examples, expected, "docs/examples.md", `documents ${expected}`);
 }
 
 if (failures.length > 0) {

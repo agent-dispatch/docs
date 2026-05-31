@@ -8,6 +8,8 @@ Public status badges:
 - [Local E2E](https://github.com/agent-dispatch/docs/actions/workflows/local-e2e.yml)
 - [Live AWS Verification](https://github.com/agent-dispatch/docs/actions/workflows/live-aws-verification.yml)
 
+Use [Examples](./examples.md) to choose the right no-cloud, published npm, prompt-kit, live preflight, or live dispatch path before making a public claim.
+
 ## Current Local Proof
 
 Run from the parent multi-repo workspace:
