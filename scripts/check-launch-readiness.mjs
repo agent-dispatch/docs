@@ -310,6 +310,17 @@ for (const expected of [
   mustInclude(liveWorkflow, expected, ".github/workflows/live-aws-verification.yml", `configures ${expected}`);
 }
 
+const docsCiWorkflow = await readFile(join(docsRoot, ".github", "workflows", "ci.yml"), "utf8");
+for (const expected of [
+  ".agentdispatch-workspace/agentdispatch-core",
+  ".agentdispatch-workspace/agentdispatch-website",
+  ".agentdispatch-workspace/agentdispatch-github-profile",
+  "AGENTDISPATCH_WORKSPACE_ROOT",
+  "npm test"
+]) {
+  mustInclude(docsCiWorkflow, expected, ".github/workflows/ci.yml", `configures ${expected}`);
+}
+
 const localE2eWorkflow = await readFile(join(docsRoot, ".github", "workflows", "local-e2e.yml"), "utf8");
 for (const expected of [
   "verify:launch",

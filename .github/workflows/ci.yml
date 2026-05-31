@@ -13,11 +13,54 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: agent-dispatch/core
+          path: .agentdispatch-workspace/agentdispatch-core
+      - uses: actions/checkout@v4
+        with:
+          repository: agent-dispatch/store-sqlite
+          path: .agentdispatch-workspace/agentdispatch-store-sqlite
+      - uses: actions/checkout@v4
+        with:
+          repository: agent-dispatch/adapter-aws-agentcore
+          path: .agentdispatch-workspace/agentdispatch-adapter-aws-agentcore
+      - uses: actions/checkout@v4
+        with:
+          repository: agent-dispatch/worker-agentcore
+          path: .agentdispatch-workspace/agentdispatch-worker-agentcore
+      - uses: actions/checkout@v4
+        with:
+          repository: agent-dispatch/sdk-js
+          path: .agentdispatch-workspace/agentdispatch-sdk-js
+      - uses: actions/checkout@v4
+        with:
+          repository: agent-dispatch/mcp-server
+          path: .agentdispatch-workspace/agentdispatch-mcp-server
+      - uses: actions/checkout@v4
+        with:
+          repository: agent-dispatch/cli
+          path: .agentdispatch-workspace/agentdispatch-cli
+      - uses: actions/checkout@v4
+        with:
+          repository: agent-dispatch/adapter-template
+          path: .agentdispatch-workspace/agentdispatch-adapter-template
+      - uses: actions/checkout@v4
+        with:
+          repository: agent-dispatch/website
+          path: .agentdispatch-workspace/agentdispatch-website
+      - uses: actions/checkout@v4
+        with:
+          repository: agent-dispatch/.github
+          path: .agentdispatch-workspace/agentdispatch-github-profile
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
+          cache-dependency-path: package-lock.json
       - name: Install dependencies
         run: npm ci
       - name: Validate docs
+        env:
+          AGENTDISPATCH_WORKSPACE_ROOT: ${{ github.workspace }}/.agentdispatch-workspace
         run: npm test
