@@ -44,6 +44,7 @@ That gate verifies:
 | Release readiness | Checks package metadata, CI workflows, provenance publish workflows, and per-package release docs. |
 | Release status | `status:release` summarizes repo cleanliness, unpushed commits, launch gates, and live AWS evidence state. |
 | Retained local evidence | `AGENTDISPATCH_LOCAL_E2E_REPORT=./agentdispatch-local-e2e-report.json` writes a JSON record for launch notes. |
+| Retained CI evidence | The docs `Local E2E` workflow uploads `agentdispatch-launch-evidence` with local E2E, npm drift, security audit, published canary, and release-status JSON reports. |
 
 ## Live Cloud Proof
 
@@ -74,7 +75,7 @@ The generated dispatch report must contain this claim before a public live-cloud
 Live AWS dispatch verified against a real AgentCore runtime.
 ```
 
-Maintainers can also run the docs repo `Live AWS Verification` GitHub Actions workflow. It uses configured repository secrets, runs `verify:aws-live`, and uploads `agentdispatch-live-aws-report.json` as the release evidence artifact.
+Maintainers can also run the docs repo `Live AWS Verification` GitHub Actions workflow. It uses configured repository secrets, runs `verify:aws-live`, and uploads `agentdispatch-live-aws-report.json` as the release evidence artifact. For no-cloud release evidence, run the docs repo `Local E2E` workflow and download the uploaded `agentdispatch-launch-evidence` artifact.
 
 ## Claim Rules
 

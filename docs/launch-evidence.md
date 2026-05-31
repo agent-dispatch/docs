@@ -41,6 +41,18 @@ That writes:
 
 Use the transcript for recording a short terminal demo or for PR review. Do not use it as proof of live AWS dispatch.
 
+## CI Evidence
+
+The docs repo `Local E2E` workflow runs the local gate, npm version drift check, security audit, published package canary, and release-status capture. Successful runs upload an `agentdispatch-launch-evidence` artifact containing:
+
+- `agentdispatch-local-e2e-report.json`
+- `agentdispatch-npm-status-report.json`
+- `agentdispatch-security-audit-report.json`
+- `agentdispatch-published-smoke-report.json`
+- `agentdispatch-release-status.json`
+
+Use this artifact when launch notes need a reproducible CI link instead of local terminal output.
+
 ## Release Status Evidence
 
 After the local report exists, run:

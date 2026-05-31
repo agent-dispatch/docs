@@ -252,6 +252,19 @@ for (const expected of [
   mustInclude(liveWorkflow, expected, ".github/workflows/live-aws-verification.yml", `configures ${expected}`);
 }
 
+const localE2eWorkflow = await readFile(join(docsRoot, ".github", "workflows", "local-e2e.yml"), "utf8");
+for (const expected of [
+  "AGENTDISPATCH_LOCAL_E2E_REPORT",
+  "AGENTDISPATCH_NPM_STATUS_REPORT",
+  "AGENTDISPATCH_SECURITY_REPORT",
+  "AGENTDISPATCH_PUBLISHED_SMOKE_REPORT",
+  "agentdispatch-release-status.json",
+  "agentdispatch-launch-evidence",
+  "actions/upload-artifact@v4"
+]) {
+  mustInclude(localE2eWorkflow, expected, ".github/workflows/local-e2e.yml", `configures ${expected}`);
+}
+
 const verificationMatrix = await readFile(join(docsRoot, "docs", "verification-matrix.md"), "utf8");
 for (const expected of [
   "./examples.md",
@@ -280,6 +293,7 @@ for (const expected of [
   "AGENTDISPATCH_NPM_STATUS_REPORT",
   "AGENTDISPATCH_SECURITY_REPORT",
   "AGENTDISPATCH_PUBLISHED_SMOKE_REPORT",
+  "agentdispatch-launch-evidence",
   "AGENTDISPATCH_LIVE_DISPATCH=1",
   "Live AWS dispatch verified against a real AgentCore runtime",
   "Do not commit account-specific live AWS reports"
