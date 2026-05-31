@@ -33,5 +33,8 @@
   "bugs": {
     "url": "https://github.com/agent-dispatch/docs/issues"
   },
-  "homepage": "https://github.com/agent-dispatch/docs#readme"
+  "homepage": "https://github.com/agent-dispatch/docs#readme",
+  "engines": {
+    "node": ">=20.19"
+  }
 }

@@ -4,6 +4,17 @@ set -euo pipefail
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 docs_root="$(cd "$script_dir/.." && pwd)"
 workspace_root="${AGENTDISPATCH_WORKSPACE_ROOT:-$(cd "$docs_root/.." && pwd)}"
+cleanup_dirs=()
+
+cleanup() {
+  for dir in "${cleanup_dirs[@]}"; do
+    rm -rf "$dir"
+  done
+}
+trap cleanup EXIT
+
+pack_dir="$(mktemp -d)"
+cleanup_dirs+=("$pack_dir")
 
 packages=(
   agentdispatch-core
@@ -41,6 +52,66 @@ require_file() {
   fi
 }
 
+package_name() {
+  local package_dir="$1"
+  node -e "console.log(require('${package_dir}/package.json').name)"
+}
+
+is_private_package() {
+  local package_dir="$1"
+  node -e "process.exit(require('${package_dir}/package.json').private === true ? 0 : 1)"
+}
+
+local_agentdispatch_deps() {
+  local package_dir="$1"
+  node -e "
+    const pkg = require('${package_dir}/package.json');
+    const deps = new Set();
+    for (const section of ['dependencies', 'devDependencies', 'peerDependencies']) {
+      for (const name of Object.keys(pkg[section] ?? {})) {
+        if (name.startsWith('@agent-dispatch/')) deps.add(name);
+      }
+    }
+    for (const dep of deps) console.log(dep);
+  "
+}
+
+tarball_prefix() {
+  local name="$1"
+  name="${name#@}"
+  echo "${name//\//-}"
+}
+
+install_local_agentdispatch_deps() {
+  local package_dir="$1"
+  local tarballs=()
+  local dep prefix pattern
+  while IFS= read -r dep; do
+    [[ -n "$dep" ]] || continue
+    prefix="$(tarball_prefix "$dep")"
+    pattern="$pack_dir/$prefix"-*.tgz
+    if compgen -G "$pattern" > /dev/null; then
+      tarballs+=( $pattern )
+    fi
+  done < <(local_agentdispatch_deps "$package_dir")
+
+  if [[ "${#tarballs[@]}" -gt 0 ]]; then
+    run_step npm --prefix "$package_dir" install --no-save --package-lock=false "${tarballs[@]}"
+  fi
+}
+
+pack_local_package() {
+  local package_dir="$1"
+  local name prefix
+  name="$(package_name "$package_dir")"
+  if [[ "$name" == @agent-dispatch/* ]] && ! is_private_package "$package_dir"; then
+    prefix="$(tarball_prefix "$name")"
+    rm -f "$pack_dir/$prefix"-*.tgz
+    printf '\n===== npm pack: %s =====\n' "$package_dir"
+    (cd "$package_dir" && npm pack --pack-destination "$pack_dir")
+  fi
+}
+
 echo "Verifying AgentDispatch workspace: $workspace_root"
 
 require_file "$workspace_root/agentdispatch-github-profile/profile/assets/org-banner.svg"
@@ -62,19 +133,21 @@ for package in "${packages[@]}"; do
       run_step npm --prefix "$package_dir" install --package-lock=false
     fi
   fi
+  install_local_agentdispatch_deps "$package_dir"
   run_step npm --prefix "$package_dir" test
   if has_script "$package_dir" typecheck; then
     run_step npm --prefix "$package_dir" run typecheck
   fi
   if has_script "$package_dir" build; then
     run_step npm --prefix "$package_dir" run build
+    pack_local_package "$package_dir"
   fi
 done
 
 run_step npm --prefix "$workspace_root/agentdispatch-docs" run smoke:packages
 
 tmpdir="$(mktemp -d)"
-trap 'rm -rf "$tmpdir"' EXIT
+cleanup_dirs+=("$tmpdir")
 config="$tmpdir/agentdispatch.config.json"
 
 run_step node "$workspace_root/agentdispatch-cli/dist/index.js" init \
