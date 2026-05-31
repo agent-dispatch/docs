@@ -27,6 +27,7 @@
     "status:npm": "node scripts/check-npm-version-drift.mjs",
     "status:release": "node scripts/release-status.mjs",
     "test": "npm run lint:markdown && npm run lint:links && npm run lint:launch",
+    "verify:launch": "bash scripts/verify-launch.sh",
     "verify:local-e2e": "bash scripts/verify-local-e2e.sh",
     "verify:aws-live": "bash scripts/verify-aws-live.sh"
   },

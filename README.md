@@ -55,6 +55,15 @@ npm --prefix agentdispatch-docs run status:release
 It reports repo cleanliness, commits ahead of `origin/main`, local launch gates, and whether a live AWS evidence report exists.
 If `AGENTDISPATCH_LOCAL_E2E_REPORT`, `AGENTDISPATCH_NPM_STATUS_REPORT`, `AGENTDISPATCH_SECURITY_REPORT`, or `AGENTDISPATCH_PUBLISHED_SMOKE_REPORT` point at retained JSON reports, it also shows which launch evidence has actually been kept.
 
+To run the complete no-cloud launch gate and retain the JSON evidence bundle in one command:
+
+```bash
+AGENTDISPATCH_LAUNCH_EVIDENCE_DIR=./agentdispatch-launch-evidence \
+npm --prefix agentdispatch-docs run verify:launch
+```
+
+That command runs the local E2E gate, npm version drift check, security audit, published package canary, and release-status capture. It does not run live AWS dispatch.
+
 To compare local package versions with npm before publishing:
 
 ```bash

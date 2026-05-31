@@ -154,7 +154,7 @@ await assertSyncedAsset(
 );
 
 const docsPackageJson = JSON.parse(await readFile(join(docsRoot, "package.json"), "utf8"));
-for (const script of ["demo:local", "demo:record", "verify:local-e2e", "verify:aws-live", "smoke:packages", "smoke:published", "status:release", "status:npm", "status:security"]) {
+for (const script of ["demo:local", "demo:record", "verify:launch", "verify:local-e2e", "verify:aws-live", "smoke:packages", "smoke:published", "status:release", "status:npm", "status:security"]) {
   if (!docsPackageJson.scripts?.[script]) {
     failures.push(`package.json: missing script ${script}`);
   }
@@ -184,6 +184,18 @@ for (const expected of [
 const localE2eScript = await readFile(join(docsRoot, "scripts", "verify-local-e2e.sh"), "utf8");
 mustInclude(localE2eScript, "status:release", "scripts/verify-local-e2e.sh", "runs release status");
 mustInclude(localE2eScript, "AGENTDISPATCH_LOCAL_E2E_REPORT", "scripts/verify-local-e2e.sh", "writes optional local E2E evidence report");
+
+const launchVerifyScript = await readFile(join(docsRoot, "scripts", "verify-launch.sh"), "utf8");
+for (const expected of [
+  "AGENTDISPATCH_LAUNCH_EVIDENCE_DIR",
+  "verify:local-e2e",
+  "status:npm",
+  "status:security",
+  "smoke:published",
+  "agentdispatch-release-status.json"
+]) {
+  mustInclude(launchVerifyScript, expected, "scripts/verify-launch.sh", `runs ${expected}`);
+}
 
 const npmStatusScript = await readFile(join(docsRoot, "scripts", "check-npm-version-drift.mjs"), "utf8");
 mustInclude(npmStatusScript, "AGENTDISPATCH_NPM_STATUS_REPORT", "scripts/check-npm-version-drift.mjs", "writes optional npm evidence report");
@@ -254,10 +266,8 @@ for (const expected of [
 
 const localE2eWorkflow = await readFile(join(docsRoot, ".github", "workflows", "local-e2e.yml"), "utf8");
 for (const expected of [
-  "AGENTDISPATCH_LOCAL_E2E_REPORT",
-  "AGENTDISPATCH_NPM_STATUS_REPORT",
-  "AGENTDISPATCH_SECURITY_REPORT",
-  "AGENTDISPATCH_PUBLISHED_SMOKE_REPORT",
+  "verify:launch",
+  "AGENTDISPATCH_LAUNCH_EVIDENCE_DIR",
   "agentdispatch-release-status.json",
   "agentdispatch-launch-evidence",
   "actions/upload-artifact@v4"
@@ -294,6 +304,7 @@ for (const expected of [
   "AGENTDISPATCH_SECURITY_REPORT",
   "AGENTDISPATCH_PUBLISHED_SMOKE_REPORT",
   "agentdispatch-launch-evidence",
+  "verify:launch",
   "AGENTDISPATCH_LIVE_DISPATCH=1",
   "Live AWS dispatch verified against a real AgentCore runtime",
   "Do not commit account-specific live AWS reports"

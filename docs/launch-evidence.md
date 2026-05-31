@@ -4,6 +4,15 @@ Use this page before a public push, release note, launch post, or demo recording
 
 ## Local E2E Evidence
 
+For the complete no-cloud launch gate, run:
+
+```bash
+AGENTDISPATCH_LAUNCH_EVIDENCE_DIR=./agentdispatch-launch-evidence \
+npm --prefix agentdispatch-docs run verify:launch
+```
+
+That runs local E2E, npm version drift, security audit, published package canary, and release-status capture, then writes all JSON reports into the evidence directory.
+
 Run the local gate with an evidence report path:
 
 ```bash

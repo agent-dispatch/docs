@@ -81,34 +81,11 @@ jobs:
         with:
           node-version: 22
 
-      - name: Verify local multi-repo E2E
-        run: npm --prefix agentdispatch/agentdispatch-docs run verify:local-e2e
+      - name: Verify launch evidence
+        run: npm --prefix agentdispatch/agentdispatch-docs run verify:launch
         env:
           AGENTDISPATCH_VERIFY_INSTALL: "1"
-          AGENTDISPATCH_LOCAL_E2E_REPORT: ${{ github.workspace }}/agentdispatch-local-e2e-report.json
-
-      - name: Check npm version drift
-        run: npm --prefix agentdispatch/agentdispatch-docs run status:npm
-        env:
-          AGENTDISPATCH_NPM_STATUS_REPORT: ${{ github.workspace }}/agentdispatch-npm-status-report.json
-
-      - name: Check npm security audit
-        run: npm --prefix agentdispatch/agentdispatch-docs run status:security -- --strict
-        env:
-          AGENTDISPATCH_SECURITY_REPORT: ${{ github.workspace }}/agentdispatch-security-audit-report.json
-
-      - name: Check published package canary
-        run: npm --prefix agentdispatch/agentdispatch-docs run smoke:published
-        env:
-          AGENTDISPATCH_PUBLISHED_SMOKE_REPORT: ${{ github.workspace }}/agentdispatch-published-smoke-report.json
-
-      - name: Record release status
-        run: npm --prefix agentdispatch/agentdispatch-docs run status:release -- --json > agentdispatch-release-status.json
-        env:
-          AGENTDISPATCH_LOCAL_E2E_REPORT: ${{ github.workspace }}/agentdispatch-local-e2e-report.json
-          AGENTDISPATCH_NPM_STATUS_REPORT: ${{ github.workspace }}/agentdispatch-npm-status-report.json
-          AGENTDISPATCH_SECURITY_REPORT: ${{ github.workspace }}/agentdispatch-security-audit-report.json
-          AGENTDISPATCH_PUBLISHED_SMOKE_REPORT: ${{ github.workspace }}/agentdispatch-published-smoke-report.json
+          AGENTDISPATCH_LAUNCH_EVIDENCE_DIR: ${{ github.workspace }}
 
       - name: Upload launch evidence reports
         uses: actions/upload-artifact@v4

@@ -77,6 +77,13 @@ AGENTDISPATCH_SECURITY_REPORT=./agentdispatch-security-audit-report.json npm --p
 AGENTDISPATCH_PUBLISHED_SMOKE_REPORT=./agentdispatch-published-smoke-report.json npm --prefix agentdispatch-docs run smoke:published
 ```
 
+Or run the complete no-cloud launch gate and evidence capture with:
+
+```bash
+AGENTDISPATCH_LAUNCH_EVIDENCE_DIR=./agentdispatch-launch-evidence \
+npm --prefix agentdispatch-docs run verify:launch
+```
+
 For live AWS preflight:
 
 ```bash
