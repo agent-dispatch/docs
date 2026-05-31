@@ -100,6 +100,15 @@ npm run status:npm
 
 That version-drift check reports which packages are synced, pending publication, missing on npm, or unexpectedly behind npm.
 
+Before triggering publish workflows, verify public package tarball metadata from the real package directories:
+
+```bash
+cd agentdispatch-docs
+npm run status:publish
+```
+
+That dry-run check confirms each package would publish as the intended `@agent-dispatch/*` package instead of accidentally packaging the parent workspace.
+
 ## Account Profile Config
 
 Users configure cloud accounts outside MCP calls. Raw cloud credentials are never passed through MCP.

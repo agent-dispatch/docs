@@ -154,7 +154,7 @@ await assertSyncedAsset(
 );
 
 const docsPackageJson = JSON.parse(await readFile(join(docsRoot, "package.json"), "utf8"));
-for (const script of ["demo:local", "demo:record", "verify:launch", "verify:local-e2e", "verify:aws-live", "smoke:packages", "smoke:published", "status:release", "status:npm", "status:security"]) {
+for (const script of ["demo:local", "demo:record", "verify:launch", "verify:local-e2e", "verify:aws-live", "smoke:packages", "smoke:published", "status:release", "status:npm", "status:publish", "status:security"]) {
   if (!docsPackageJson.scripts?.[script]) {
     failures.push(`package.json: missing script ${script}`);
   }
@@ -190,8 +190,10 @@ for (const expected of [
   "AGENTDISPATCH_LAUNCH_EVIDENCE_DIR",
   "verify:local-e2e",
   "status:npm",
+  "status:publish",
   "status:security",
   "smoke:published",
+  "agentdispatch-publish-dry-run-report.json",
   "agentdispatch-release-status.json"
 ]) {
   mustInclude(launchVerifyScript, expected, "scripts/verify-launch.sh", `runs ${expected}`);
@@ -199,6 +201,20 @@ for (const expected of [
 
 const npmStatusScript = await readFile(join(docsRoot, "scripts", "check-npm-version-drift.mjs"), "utf8");
 mustInclude(npmStatusScript, "AGENTDISPATCH_NPM_STATUS_REPORT", "scripts/check-npm-version-drift.mjs", "writes optional npm evidence report");
+
+const publishDryRunScript = await readFile(join(docsRoot, "scripts", "check-publish-dry-run.mjs"), "utf8");
+for (const expected of [
+  "AGENTDISPATCH_PUBLISH_DRY_RUN_REPORT",
+  "npm",
+  "publish",
+  "--dry-run",
+  "--access",
+  "public",
+  "unexpected-package",
+  "@agent-dispatch/core"
+]) {
+  mustInclude(publishDryRunScript, expected, "scripts/check-publish-dry-run.mjs", `implements ${expected}`);
+}
 
 const securityAuditEvidenceScript = await readFile(join(docsRoot, "scripts", "check-security-audit.mjs"), "utf8");
 mustInclude(securityAuditEvidenceScript, "AGENTDISPATCH_SECURITY_REPORT", "scripts/check-security-audit.mjs", "writes optional security evidence report");
@@ -223,6 +239,7 @@ mustInclude(docsReadme, "npm --prefix agentdispatch-docs run demo:local", "READM
 mustInclude(docsReadme, "npm --prefix agentdispatch-docs run demo:record", "README.md", "shows demo recording command");
 mustInclude(docsReadme, "npm --prefix agentdispatch-docs run status:release", "README.md", "shows release status command");
 mustInclude(docsReadme, "npm --prefix agentdispatch-docs run status:npm", "README.md", "shows npm status command");
+mustInclude(docsReadme, "npm --prefix agentdispatch-docs run status:publish", "README.md", "shows publish dry-run command");
 mustInclude(docsReadme, "npm --prefix agentdispatch-docs run status:security", "README.md", "shows security status command");
 
 const contributorMap = await readFile(join(docsRoot, "docs", "contributor-map.md"), "utf8");
@@ -269,6 +286,7 @@ for (const expected of [
   "verify:launch",
   "AGENTDISPATCH_LAUNCH_EVIDENCE_DIR",
   "agentdispatch-release-status.json",
+  "agentdispatch-publish-dry-run-report.json",
   "agentdispatch-launch-evidence",
   "actions/upload-artifact@v4"
 ]) {
@@ -282,6 +300,7 @@ for (const expected of [
   "verify:local-e2e",
   "smoke:published",
   "status:release",
+  "status:publish",
   "verify:aws-live",
   "AGENTDISPATCH_LIVE_DISPATCH=1",
   "Do not use local E2E evidence as proof that live AWS dispatch works",
@@ -298,9 +317,11 @@ for (const expected of [
   "AGENTDISPATCH_DEMO_RECORD_DIR=./agentdispatch-local-demo-recording",
   "local-demo.report.json",
   "status:npm",
+  "status:publish",
   "smoke:published",
   "status:security",
   "AGENTDISPATCH_NPM_STATUS_REPORT",
+  "AGENTDISPATCH_PUBLISH_DRY_RUN_REPORT",
   "AGENTDISPATCH_SECURITY_REPORT",
   "AGENTDISPATCH_PUBLISHED_SMOKE_REPORT",
   "agentdispatch-launch-evidence",
@@ -363,7 +384,9 @@ for (const expected of [
   "smoke:published",
   "status:release",
   "status:npm",
+  "status:publish",
   "status:security",
+  "npm publish --dry-run --json",
   "npm publish --provenance --access public",
   "AGENTDISPATCH_VERIFY_INSTALL=1 npm --prefix agentdispatch-docs run verify:local-e2e",
   "@agent-dispatch/core",
@@ -382,6 +405,7 @@ mustInclude(localDemoTranscript, "AGENTDISPATCH_DEMO_RECORD_DIR", "docs/local-de
 const packageConsumption = await readFile(join(docsRoot, "docs", "package-consumption.md"), "utf8");
 mustInclude(packageConsumption, "smoke:published", "docs/package-consumption.md", "documents published package smoke");
 mustInclude(packageConsumption, "status:npm", "docs/package-consumption.md", "documents npm version drift check");
+mustInclude(packageConsumption, "status:publish", "docs/package-consumption.md", "documents publish dry-run check");
 
 const launchChecklist = await readFile(join(docsRoot, "docs", "repo-launch-checklist.md"), "utf8");
 mustInclude(launchChecklist, "./examples.md", "docs/repo-launch-checklist.md", "links examples");
@@ -396,6 +420,7 @@ mustInclude(launchChecklist, "demo:local", "docs/repo-launch-checklist.md", "run
 mustInclude(launchChecklist, "demo:record", "docs/repo-launch-checklist.md", "records local demo");
 mustInclude(launchChecklist, "status:release", "docs/repo-launch-checklist.md", "runs release status");
 mustInclude(launchChecklist, "status:npm", "docs/repo-launch-checklist.md", "runs npm status");
+mustInclude(launchChecklist, "status:publish", "docs/repo-launch-checklist.md", "runs publish dry-run status");
 mustInclude(launchChecklist, "status:security", "docs/repo-launch-checklist.md", "runs security status");
 mustInclude(launchChecklist, "AGENTDISPATCH_LOCAL_E2E_REPORT", "docs/repo-launch-checklist.md", "captures local E2E report");
 mustInclude(launchChecklist, "npm run smoke:published", "docs/repo-launch-checklist.md", "runs published package smoke");
@@ -405,9 +430,12 @@ const releaseStatus = await readFile(join(docsRoot, "docs", "release-status.md")
 for (const expected of [
   "status:release",
   "status:npm",
+  "status:publish",
   "status:security",
+  "Retained publish dry-run report found",
   "Retained local E2E report found",
   "AGENTDISPATCH_LOCAL_E2E_REPORT",
+  "AGENTDISPATCH_PUBLISH_DRY_RUN_REPORT",
   "--json",
   "--strict",
   "origin/main",

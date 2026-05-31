@@ -30,6 +30,7 @@ const aheadRepos = repoStatuses.filter((repo) => repo.ahead > 0);
 const localE2eReport = inspectLocalE2eReport();
 const publishedSmokeReport = inspectPublishedSmokeReport();
 const npmStatusReport = inspectNpmStatusReport();
+const publishDryRunReport = inspectPublishDryRunReport();
 const securityReport = inspectSecurityReport();
 const liveReport = inspectLiveReport();
 
@@ -58,6 +59,13 @@ const status = {
       command: "npm --prefix agentdispatch-docs run status:npm",
       evidenceCommand: "AGENTDISPATCH_NPM_STATUS_REPORT=./agentdispatch-npm-status-report.json npm --prefix agentdispatch-docs run status:npm",
       proves: "local package versions compared with currently published npm versions"
+    },
+    {
+      name: "publish-dry-run",
+      status: publishDryRunReport.verified ? "ok" : publishDryRunReport.present ? "warn" : "manual",
+      command: "npm --prefix agentdispatch-docs run status:publish",
+      evidenceCommand: "AGENTDISPATCH_PUBLISH_DRY_RUN_REPORT=./agentdispatch-publish-dry-run-report.json npm --prefix agentdispatch-docs run status:publish -- --strict",
+      proves: "npm publish dry-run from each package directory for the intended scoped packages"
     },
     {
       name: "security-audit",
@@ -89,6 +97,7 @@ const status = {
     publishedSmokeReportFound: publishedSmokeReport.verified,
     npmStatusReportFound: npmStatusReport.verified,
     npmPendingPublish: npmStatusReport.pendingPublish,
+    publishDryRunReportFound: publishDryRunReport.verified,
     securityReportFound: securityReport.verified,
     liveAwsPreflightVerified: liveReport.preflightVerified,
     liveAwsDispatchVerified: liveReport.dispatchVerified,
@@ -98,6 +107,7 @@ const status = {
   localE2eReport,
   publishedSmokeReport,
   npmStatusReport,
+  publishDryRunReport,
   securityReport,
   liveReport
 };
@@ -252,6 +262,50 @@ function inspectNpmStatusReport() {
   };
 }
 
+function inspectPublishDryRunReport() {
+  const candidates = [
+    process.env.AGENTDISPATCH_PUBLISH_DRY_RUN_REPORT,
+    join(workspaceRoot, "agentdispatch-publish-dry-run-report.json"),
+    join(docsRoot, "agentdispatch-publish-dry-run-report.json")
+  ].filter(Boolean);
+
+  for (const candidate of candidates) {
+    const reportPath = resolve(candidate);
+    if (!existsSync(reportPath)) continue;
+    try {
+      const report = JSON.parse(readFileSync(reportPath, "utf8"));
+      const summary = report.summary ?? {};
+      const checkFailed = Number(summary.checkFailed ?? 0);
+      const unexpectedPackage = Number(summary.unexpectedPackage ?? 0);
+      const total = Number(summary.total ?? 0);
+      const ok = Number(summary.ok ?? 0);
+      return {
+        path: reportPath,
+        present: true,
+        checkedAt: report.checkedAt ?? null,
+        verified: report.ok === true && total > 0 && ok === total && checkFailed === 0 && unexpectedPackage === 0,
+        ok,
+        total,
+        checkFailed,
+        unexpectedPackage
+      };
+    } catch (error) {
+      return {
+        path: reportPath,
+        present: true,
+        parseError: error.message,
+        verified: false
+      };
+    }
+  }
+
+  return {
+    path: resolve(candidates[0] ?? join(workspaceRoot, "agentdispatch-publish-dry-run-report.json")),
+    present: false,
+    verified: false
+  };
+}
+
 function inspectSecurityReport() {
   const candidates = [
     process.env.AGENTDISPATCH_SECURITY_REPORT,
@@ -362,6 +416,7 @@ function printHuman(report) {
   console.log(`- Retained local E2E report found: ${yesNo(summary.localE2eReportFound)}`);
   console.log(`- Retained published canary report found: ${yesNo(summary.publishedSmokeReportFound)}`);
   console.log(`- Retained npm version report found: ${yesNo(summary.npmStatusReportFound)}${summary.npmStatusReportFound ? `, pending publish: ${summary.npmPendingPublish}` : ""}`);
+  console.log(`- Retained publish dry-run report found: ${yesNo(summary.publishDryRunReportFound)}`);
   console.log(`- Retained security audit report found: ${yesNo(summary.securityReportFound)}`);
   console.log(`- Repos with unpushed commits: ${summary.reposAheadOfOrigin}`);
   console.log(`- Live AWS preflight report found: ${yesNo(summary.liveAwsPreflightVerified)}`);

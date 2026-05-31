@@ -50,6 +50,21 @@ npm --prefix agentdispatch-docs run status:npm
 
 This reports which public packages are already synced with npm and which local package versions are pending publication.
 
+Run publish dry-runs from the public package directories before triggering publish workflows:
+
+```bash
+npm --prefix agentdispatch-docs run status:publish
+```
+
+Use the strict evidence form before release automation:
+
+```bash
+AGENTDISPATCH_PUBLISH_DRY_RUN_REPORT=./agentdispatch-publish-dry-run-report.json \
+npm --prefix agentdispatch-docs run status:publish -- --strict
+```
+
+This verifies `npm publish --dry-run --json` metadata for each intended `@agent-dispatch/*` package. Do not replace it with `npm --prefix <package> publish --dry-run`; that can package the parent workspace instead of the scoped package.
+
 Audit high and critical npm vulnerabilities across all repos:
 
 ```bash

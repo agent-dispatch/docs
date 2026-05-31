@@ -14,6 +14,7 @@ It prints a local release dashboard for the multi-repo workspace:
 - launch gate commands to run
 - whether a retained local E2E JSON evidence report exists
 - whether retained npm, security, and published-canary evidence reports exist
+- whether retained npm publish dry-run evidence exists
 - whether a live AWS verification report exists
 - whether the live AWS report proves preflight only or real dispatch
 
@@ -29,6 +30,20 @@ To retain the npm version evidence for `status:release`, write a report:
 ```bash
 AGENTDISPATCH_NPM_STATUS_REPORT=./agentdispatch-npm-status-report.json \
 npm --prefix agentdispatch-docs run status:npm
+```
+
+Use this separate networked command to verify public package tarball metadata before publish:
+
+```bash
+npm --prefix agentdispatch-docs run status:publish
+```
+
+`status:publish` runs `npm publish --dry-run --json` from each public package directory. This matters because running publish dry-runs through `npm --prefix` can package the wrong parent workspace.
+To retain the publish dry-run evidence for `status:release`, write a report:
+
+```bash
+AGENTDISPATCH_PUBLISH_DRY_RUN_REPORT=./agentdispatch-publish-dry-run-report.json \
+npm --prefix agentdispatch-docs run status:publish -- --strict
 ```
 
 Use this separate networked command to audit high and critical npm vulnerabilities across the workspace:
@@ -73,6 +88,7 @@ It does not run tests, builds, package smoke tests, public npm canaries, or live
 AGENTDISPATCH_VERIFY_INSTALL=1 npm --prefix agentdispatch-docs run verify:local-e2e
 AGENTDISPATCH_VERIFY_INSTALL=1 AGENTDISPATCH_LOCAL_E2E_REPORT=./agentdispatch-local-e2e-report.json npm --prefix agentdispatch-docs run verify:local-e2e
 AGENTDISPATCH_NPM_STATUS_REPORT=./agentdispatch-npm-status-report.json npm --prefix agentdispatch-docs run status:npm
+AGENTDISPATCH_PUBLISH_DRY_RUN_REPORT=./agentdispatch-publish-dry-run-report.json npm --prefix agentdispatch-docs run status:publish -- --strict
 AGENTDISPATCH_SECURITY_REPORT=./agentdispatch-security-audit-report.json npm --prefix agentdispatch-docs run status:security -- --strict
 AGENTDISPATCH_PUBLISHED_SMOKE_REPORT=./agentdispatch-published-smoke-report.json npm --prefix agentdispatch-docs run smoke:published
 ```
@@ -126,6 +142,8 @@ Gates
   npm --prefix agentdispatch-docs run smoke:published
 - npm-version-drift: manual
   npm --prefix agentdispatch-docs run status:npm
+- publish-dry-run: manual
+  npm --prefix agentdispatch-docs run status:publish
 - security-audit: manual
   npm --prefix agentdispatch-docs run status:security
 - live-aws: missing
@@ -136,6 +154,7 @@ Claim boundary
 - Retained local E2E report found: no
 - Retained published canary report found: no
 - Retained npm version report found: no
+- Retained publish dry-run report found: no
 - Retained security audit report found: no
 - Repos with unpushed commits: 11
 - Live AWS preflight report found: no

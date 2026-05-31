@@ -11,7 +11,7 @@ AGENTDISPATCH_LAUNCH_EVIDENCE_DIR=./agentdispatch-launch-evidence \
 npm --prefix agentdispatch-docs run verify:launch
 ```
 
-That runs local E2E, npm version drift, security audit, published package canary, and release-status capture, then writes all JSON reports into the evidence directory.
+That runs local E2E, npm version drift, publish dry-run, security audit, published package canary, and release-status capture, then writes all JSON reports into the evidence directory.
 
 Run the local gate with an evidence report path:
 
@@ -56,6 +56,7 @@ The docs repo `Local E2E` workflow runs the local gate, npm version drift check,
 
 - `agentdispatch-local-e2e-report.json`
 - `agentdispatch-npm-status-report.json`
+- `agentdispatch-publish-dry-run-report.json`
 - `agentdispatch-security-audit-report.json`
 - `agentdispatch-published-smoke-report.json`
 - `agentdispatch-release-status.json`
@@ -76,6 +77,7 @@ The output should include:
 Retained local E2E report found: yes
 Retained published canary report found: yes
 Retained npm version report found: yes
+Retained publish dry-run report found: yes
 Retained security audit report found: yes
 Local launch claim ready from repo state: yes
 Live AWS dispatch claim ready: no
@@ -97,6 +99,9 @@ Before telling users to install from npm, run both npm checks:
 AGENTDISPATCH_NPM_STATUS_REPORT=./agentdispatch-npm-status-report.json \
 npm --prefix agentdispatch-docs run status:npm
 
+AGENTDISPATCH_PUBLISH_DRY_RUN_REPORT=./agentdispatch-publish-dry-run-report.json \
+npm --prefix agentdispatch-docs run status:publish -- --strict
+
 AGENTDISPATCH_SECURITY_REPORT=./agentdispatch-security-audit-report.json \
 npm --prefix agentdispatch-docs run status:security -- --strict
 
@@ -104,7 +109,7 @@ AGENTDISPATCH_PUBLISHED_SMOKE_REPORT=./agentdispatch-published-smoke-report.json
 npm --prefix agentdispatch-docs run smoke:published
 ```
 
-`status:npm` tells you whether local package versions are synced, pending publication, missing on npm, or unexpectedly behind npm. `smoke:published` installs the currently published packages in a fresh consumer and verifies public imports plus the CLI and MCP binaries.
+`status:npm` tells you whether local package versions are synced, pending publication, missing on npm, or unexpectedly behind npm. `status:publish` runs `npm publish --dry-run --json` from each public package directory and verifies the tarball metadata is for the intended scoped package instead of a parent workspace package. `smoke:published` installs the currently published packages in a fresh consumer and verifies public imports plus the CLI and MCP binaries.
 `status:security` runs `npm audit` across the workspace and reports high or critical findings separately from the default local E2E gate.
 
 If `status:npm` reports `pending-publish`, do not imply the unpublished local changes are already available through npm.

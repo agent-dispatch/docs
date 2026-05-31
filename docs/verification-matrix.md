@@ -37,6 +37,7 @@ That gate verifies:
 | Build output | Runs `npm run build` for packages that expose a build script. |
 | Package consumption | Packs local publishable packages, installs those tarballs into downstream packages, then runs the package-consumption smoke test. |
 | Published install canary | `smoke:published` installs current npm packages in a fresh consumer and verifies public imports plus CLI/MCP bins. |
+| Publish dry-run | `status:publish` runs `npm publish --dry-run --json` from each public package directory and verifies the intended scoped package metadata. |
 | Security audit | `status:security` runs `npm audit` across every package and reports high or critical findings. |
 | CLI bootstrap | Runs the built CLI `init` command and validates `doctor --json` returns `ok: true`. |
 | MCP startup | Runs the built MCP server with `--check` and validates the JSON report returns `ok: true`. |
@@ -44,7 +45,7 @@ That gate verifies:
 | Release readiness | Checks package metadata, CI workflows, provenance publish workflows, and per-package release docs. |
 | Release status | `status:release` summarizes repo cleanliness, unpushed commits, launch gates, and live AWS evidence state. |
 | Retained local evidence | `AGENTDISPATCH_LOCAL_E2E_REPORT=./agentdispatch-local-e2e-report.json` writes a JSON record for launch notes. |
-| Retained CI evidence | The docs `Local E2E` workflow uploads `agentdispatch-launch-evidence` with local E2E, npm drift, security audit, published canary, and release-status JSON reports. |
+| Retained CI evidence | The docs `Local E2E` workflow uploads `agentdispatch-launch-evidence` with local E2E, npm drift, publish dry-run, security audit, published canary, and release-status JSON reports. |
 
 ## Live Cloud Proof
 

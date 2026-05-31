@@ -16,6 +16,7 @@ evidence_dir="$(cd "$evidence_dir" && pwd)"
 
 local_e2e_report="$evidence_dir/agentdispatch-local-e2e-report.json"
 npm_status_report="$evidence_dir/agentdispatch-npm-status-report.json"
+publish_dry_run_report="$evidence_dir/agentdispatch-publish-dry-run-report.json"
 security_report="$evidence_dir/agentdispatch-security-audit-report.json"
 published_smoke_report="$evidence_dir/agentdispatch-published-smoke-report.json"
 release_status_report="$evidence_dir/agentdispatch-release-status.json"
@@ -55,6 +56,11 @@ run_step env \
 
 run_step env \
   AGENTDISPATCH_WORKSPACE_ROOT="$workspace_root" \
+  AGENTDISPATCH_PUBLISH_DRY_RUN_REPORT="$publish_dry_run_report" \
+  npm --prefix "$docs_root" run status:publish -- --strict
+
+run_step env \
+  AGENTDISPATCH_WORKSPACE_ROOT="$workspace_root" \
   AGENTDISPATCH_SECURITY_REPORT="$security_report" \
   npm --prefix "$docs_root" run status:security -- --strict
 
@@ -62,11 +68,12 @@ run_step env \
   AGENTDISPATCH_PUBLISHED_SMOKE_REPORT="$published_smoke_report" \
   npm --prefix "$docs_root" run smoke:published
 
-printf '\n===== %s =====\n' "env AGENTDISPATCH_WORKSPACE_ROOT=$workspace_root AGENTDISPATCH_LOCAL_E2E_REPORT=$local_e2e_report AGENTDISPATCH_NPM_STATUS_REPORT=$npm_status_report AGENTDISPATCH_SECURITY_REPORT=$security_report AGENTDISPATCH_PUBLISHED_SMOKE_REPORT=$published_smoke_report npm --prefix $docs_root run status:release -- --json" >&2
+printf '\n===== %s =====\n' "env AGENTDISPATCH_WORKSPACE_ROOT=$workspace_root AGENTDISPATCH_LOCAL_E2E_REPORT=$local_e2e_report AGENTDISPATCH_NPM_STATUS_REPORT=$npm_status_report AGENTDISPATCH_PUBLISH_DRY_RUN_REPORT=$publish_dry_run_report AGENTDISPATCH_SECURITY_REPORT=$security_report AGENTDISPATCH_PUBLISHED_SMOKE_REPORT=$published_smoke_report npm --prefix $docs_root run status:release -- --json" >&2
 env \
   AGENTDISPATCH_WORKSPACE_ROOT="$workspace_root" \
   AGENTDISPATCH_LOCAL_E2E_REPORT="$local_e2e_report" \
   AGENTDISPATCH_NPM_STATUS_REPORT="$npm_status_report" \
+  AGENTDISPATCH_PUBLISH_DRY_RUN_REPORT="$publish_dry_run_report" \
   AGENTDISPATCH_SECURITY_REPORT="$security_report" \
   AGENTDISPATCH_PUBLISHED_SMOKE_REPORT="$published_smoke_report" \
   npm --silent --prefix "$docs_root" run status:release -- --json > "$release_status_report"
@@ -74,6 +81,7 @@ env \
 for report in \
   "$local_e2e_report" \
   "$npm_status_report" \
+  "$publish_dry_run_report" \
   "$security_report" \
   "$published_smoke_report" \
   "$release_status_report"; do
@@ -88,6 +96,7 @@ echo "Reports:"
 printf -- '- %s\n' \
   "$local_e2e_report" \
   "$npm_status_report" \
+  "$publish_dry_run_report" \
   "$security_report" \
   "$published_smoke_report" \
   "$release_status_report"

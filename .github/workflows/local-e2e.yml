@@ -94,6 +94,7 @@ jobs:
           path: |
             agentdispatch-local-e2e-report.json
             agentdispatch-npm-status-report.json
+            agentdispatch-publish-dry-run-report.json
             agentdispatch-security-audit-report.json
             agentdispatch-published-smoke-report.json
             agentdispatch-release-status.json
