@@ -31,7 +31,13 @@ To render retained evidence as a Markdown summary for launch review, run:
 npm --prefix agentdispatch-docs run status:launch-summary
 ```
 
-That status command reports local repo cleanliness, commits ahead of `origin/main`, launch gate commands, and whether a live AWS verification report exists. It does not replace `verify:local-e2e`, `smoke:published`, or `verify:aws-live`.
+To render the current push commands and npm publish order from the checkout, run:
+
+```bash
+npm --prefix agentdispatch-docs run status:push-plan
+```
+
+Those status commands report local repo cleanliness, commits ahead of `origin/main`, launch gate commands, push order, publish order, and whether a live AWS verification report exists. They do not replace `verify:local-e2e`, `smoke:published`, or `verify:aws-live`.
 
 That gate verifies:
 
@@ -50,6 +56,7 @@ That gate verifies:
 | Launch assets | Checks GitHub profile artwork, social preview dimensions, website validation, profile validation, and docs launch checks. |
 | Release readiness | Checks package metadata, CI workflows, provenance publish workflows, and per-package release docs. |
 | Release status | `status:release` summarizes repo cleanliness, unpushed commits, launch gates, and live AWS evidence state. |
+| Push and publish plan | `status:push-plan` renders exact push commands, website approval guardrails, and npm publish order. |
 | Retained local evidence | `AGENTDISPATCH_LOCAL_E2E_REPORT=./agentdispatch-local-e2e-report.json` writes a JSON record for launch notes. |
 | Retained CI evidence | The docs `Local E2E` workflow uploads `agentdispatch-launch-evidence` with local E2E, npm drift, publish dry-run, security audit, published canary, and release-status JSON reports. |
 

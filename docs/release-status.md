@@ -107,6 +107,13 @@ AGENTDISPATCH_LAUNCH_EVIDENCE_DIR=./agentdispatch-launch-evidence \
 npm --prefix agentdispatch-docs run status:launch-summary
 ```
 
+To render the exact push commands and npm publish order from the current checkout:
+
+```bash
+AGENTDISPATCH_PUSH_PLAN_REPORT=./agentdispatch-push-plan.md \
+npm --prefix agentdispatch-docs run status:push-plan
+```
+
 For live AWS preflight:
 
 ```bash

@@ -61,6 +61,7 @@ The docs repo `Local E2E` workflow runs the local gate, npm version drift check,
 - `agentdispatch-published-smoke-report.json`
 - `agentdispatch-release-status.json`
 - `agentdispatch-launch-summary.md`
+- `agentdispatch-push-plan.md`
 
 Use this artifact when launch notes need a reproducible CI link instead of local terminal output. The Markdown summary is the easiest file to attach to a release note or launch checklist review.
 
@@ -97,6 +98,13 @@ To render a human-readable summary from a retained evidence directory:
 ```bash
 AGENTDISPATCH_LAUNCH_EVIDENCE_DIR=./agentdispatch-launch-evidence \
 npm --prefix agentdispatch-docs run status:launch-summary
+```
+
+To render a push and npm publish plan from the current workspace:
+
+```bash
+AGENTDISPATCH_PUSH_PLAN_REPORT=./agentdispatch-push-plan.md \
+npm --prefix agentdispatch-docs run status:push-plan
 ```
 
 ## npm Evidence
@@ -169,6 +177,7 @@ Keep these artifacts with the launch notes:
 - `agentdispatch-security-audit-report.json`
 - `agentdispatch-published-smoke-report.json`
 - `agentdispatch-launch-summary.md`
+- `agentdispatch-push-plan.md`
 - `agentdispatch-live-aws-report.json`, if live preflight was run
 - `agentdispatch-live-aws-dispatch-report.json`, if live dispatch was run
 

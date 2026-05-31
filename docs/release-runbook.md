@@ -16,6 +16,15 @@ Publish public packages in this order:
 
 `@agent-dispatch/adapter-template` is private template source. Do not publish it unless the repository is intentionally converted into a public package.
 
+To render the current push commands and publish order from the checkout:
+
+```bash
+AGENTDISPATCH_PUSH_PLAN_REPORT=./agentdispatch-push-plan.md \
+npm --prefix agentdispatch-docs run status:push-plan
+```
+
+Do not push `agentdispatch-website` until the website has explicit approval.
+
 ## Required Local Gate
 
 Run the multi-repo local gate before any release:

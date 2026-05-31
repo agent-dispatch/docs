@@ -21,6 +21,7 @@ security_report="$evidence_dir/agentdispatch-security-audit-report.json"
 published_smoke_report="$evidence_dir/agentdispatch-published-smoke-report.json"
 release_status_report="$evidence_dir/agentdispatch-release-status.json"
 launch_summary_report="$evidence_dir/agentdispatch-launch-summary.md"
+push_plan_report="$evidence_dir/agentdispatch-push-plan.md"
 
 run_step() {
   printf '\n===== %s =====\n' "$*" >&2
@@ -94,6 +95,11 @@ run_step env \
   AGENTDISPATCH_LAUNCH_SUMMARY_REPORT="$launch_summary_report" \
   npm --prefix "$docs_root" run status:launch-summary
 
+run_step env \
+  AGENTDISPATCH_WORKSPACE_ROOT="$workspace_root" \
+  AGENTDISPATCH_PUSH_PLAN_REPORT="$push_plan_report" \
+  npm --prefix "$docs_root" run status:push-plan
+
 echo
 echo "Launch verification evidence written to:"
 echo "$evidence_dir"
@@ -106,4 +112,5 @@ printf -- '- %s\n' \
   "$security_report" \
   "$published_smoke_report" \
   "$release_status_report" \
-  "$launch_summary_report"
+  "$launch_summary_report" \
+  "$push_plan_report"

@@ -154,7 +154,7 @@ await assertSyncedAsset(
 );
 
 const docsPackageJson = JSON.parse(await readFile(join(docsRoot, "package.json"), "utf8"));
-for (const script of ["demo:local", "demo:record", "verify:launch", "verify:local-e2e", "verify:aws-live", "smoke:packages", "smoke:published", "status:release", "status:launch-summary", "status:npm", "status:publish", "status:security"]) {
+for (const script of ["demo:local", "demo:record", "verify:launch", "verify:local-e2e", "verify:aws-live", "smoke:packages", "smoke:published", "status:release", "status:launch-summary", "status:push-plan", "status:npm", "status:publish", "status:security"]) {
   if (!docsPackageJson.scripts?.[script]) {
     failures.push(`package.json: missing script ${script}`);
   }
@@ -195,7 +195,9 @@ for (const expected of [
   "smoke:published",
   "agentdispatch-publish-dry-run-report.json",
   "agentdispatch-release-status.json",
-  "agentdispatch-launch-summary.md"
+  "agentdispatch-launch-summary.md",
+  "status:push-plan",
+  "agentdispatch-push-plan.md"
 ]) {
   mustInclude(launchVerifyScript, expected, "scripts/verify-launch.sh", `runs ${expected}`);
 }
@@ -227,6 +229,20 @@ for (const expected of [
   "Claim Boundary"
 ]) {
   mustInclude(launchSummaryScript, expected, "scripts/render-launch-summary.mjs", `implements ${expected}`);
+}
+
+const pushPlanScript = await readFile(join(docsRoot, "scripts", "render-push-plan.mjs"), "utf8");
+for (const expected of [
+  "AGENTDISPATCH_WORKSPACE_ROOT",
+  "AGENTDISPATCH_PUSH_PLAN_REPORT",
+  "AgentDispatch Push And Publish Plan",
+  "origin/main",
+  "npm Publish Order",
+  "agentdispatch-website",
+  "Do not push",
+  "verify:aws-live"
+]) {
+  mustInclude(pushPlanScript, expected, "scripts/render-push-plan.mjs", `implements ${expected}`);
 }
 
 const securityAuditEvidenceScript = await readFile(join(docsRoot, "scripts", "check-security-audit.mjs"), "utf8");
@@ -301,6 +317,7 @@ for (const expected of [
   "agentdispatch-release-status.json",
   "agentdispatch-publish-dry-run-report.json",
   "agentdispatch-launch-summary.md",
+  "agentdispatch-push-plan.md",
   "agentdispatch-launch-evidence",
   "actions/upload-artifact@v4"
 ]) {
@@ -315,6 +332,7 @@ for (const expected of [
   "smoke:published",
   "status:release",
   "status:launch-summary",
+  "status:push-plan",
   "status:publish",
   "verify:aws-live",
   "AGENTDISPATCH_LIVE_DISPATCH=1",
@@ -338,6 +356,8 @@ for (const expected of [
   "AGENTDISPATCH_NPM_STATUS_REPORT",
   "AGENTDISPATCH_PUBLISH_DRY_RUN_REPORT",
   "agentdispatch-launch-summary.md",
+  "AGENTDISPATCH_PUSH_PLAN_REPORT",
+  "agentdispatch-push-plan.md",
   "AGENTDISPATCH_SECURITY_REPORT",
   "AGENTDISPATCH_PUBLISHED_SMOKE_REPORT",
   "agentdispatch-launch-evidence",
@@ -399,6 +419,7 @@ for (const expected of [
   "AGENTDISPATCH_LOCAL_E2E_REPORT",
   "smoke:published",
   "status:release",
+  "status:push-plan",
   "status:npm",
   "status:publish",
   "status:security",
@@ -436,6 +457,7 @@ mustInclude(launchChecklist, "demo:local", "docs/repo-launch-checklist.md", "run
 mustInclude(launchChecklist, "demo:record", "docs/repo-launch-checklist.md", "records local demo");
 mustInclude(launchChecklist, "status:release", "docs/repo-launch-checklist.md", "runs release status");
 mustInclude(launchChecklist, "status:launch-summary", "docs/repo-launch-checklist.md", "runs launch summary status");
+mustInclude(launchChecklist, "status:push-plan", "docs/repo-launch-checklist.md", "runs push plan status");
 mustInclude(launchChecklist, "status:npm", "docs/repo-launch-checklist.md", "runs npm status");
 mustInclude(launchChecklist, "status:publish", "docs/repo-launch-checklist.md", "runs publish dry-run status");
 mustInclude(launchChecklist, "status:security", "docs/repo-launch-checklist.md", "runs security status");
@@ -447,6 +469,7 @@ const releaseStatus = await readFile(join(docsRoot, "docs", "release-status.md")
 for (const expected of [
   "status:release",
   "status:launch-summary",
+  "status:push-plan",
   "status:npm",
   "status:publish",
   "status:security",
