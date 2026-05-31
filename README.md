@@ -11,6 +11,7 @@ Documentation for AgentDispatch: the provider-neutral MCP control plane for spaw
 - [Future provider adapters](./docs/future-provider-adapters.md) — how GCP, Azure, Kubernetes, and local adapters fit the same MCP contract.
 - [Package consumption](./docs/package-consumption.md) — how the separate repos and NPM packages work together.
 - [Local demo transcript](./docs/local-demo-transcript.md) — short copyable terminal path for a launch demo without live AWS credentials.
+- [Live AWS verification](./docs/live-aws-verification.md) — opt-in AgentCore preflight and real-dispatch proof path.
 - [Launch announcement kit](./docs/launch-announcement-kit.md) — copy for GitHub, X, LinkedIn, Hacker News, Reddit, and demo narration.
 - [Repo launch checklist](./docs/repo-launch-checklist.md) — GitHub, npm, docs, demo, and social-readiness checklist for a high-signal public launch.
 

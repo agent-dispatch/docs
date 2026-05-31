@@ -131,6 +131,8 @@ npm --prefix agentdispatch-docs run verify:aws-live
 
 Live AWS dispatch is deliberately separate from the local gate because it depends on external credentials, account state, quotas, cost, and a real AgentCore runtime ARN. Do not claim live cloud dispatch has been verified unless this command, or an actual `spawn_cloud_agent` against a real runtime, has been run successfully.
 
+Use [Live AWS verification](./live-aws-verification.md) as the authoritative runbook for required AWS inputs, what preflight proves, what real dispatch proves, and how to troubleshoot failed live checks.
+
 ## Success Criteria
 
 - A visitor can explain the project after reading the first screen.

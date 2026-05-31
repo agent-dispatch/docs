@@ -307,6 +307,8 @@ export AGENTDISPATCH_AGENTCORE_PROTOCOL=a2a
 npm test -- --run test/live.test.ts
 ```
 
+For the repo-level live proof path, use [Live AWS verification](./live-aws-verification.md). It runs the same live-preflight surface through the CLI and can optionally submit a real cloud task with `AGENTDISPATCH_LIVE_DISPATCH=1`.
+
 Runtime-mode live testing also needs a pushed worker image and execution role:
 
 ```bash

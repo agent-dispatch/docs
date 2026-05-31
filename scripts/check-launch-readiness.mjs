@@ -94,6 +94,23 @@ await assertSyncedAsset(
   "agentdispatch-website/src/assets/org-logo.svg"
 );
 
+const docsReadme = await readFile(join(docsRoot, "README.md"), "utf8");
+mustInclude(docsReadme, "./docs/live-aws-verification.md", "README.md", "links live AWS verification runbook");
+
+const liveAwsVerification = await readFile(join(docsRoot, "docs", "live-aws-verification.md"), "utf8");
+for (const expected of [
+  "AGENTDISPATCH_LIVE_DISPATCH=1",
+  "What This Proves",
+  "What This Does Not Prove",
+  "Launch Claim Rule",
+  "sample placeholder"
+]) {
+  mustInclude(liveAwsVerification, expected, "docs/live-aws-verification.md", `documents ${expected}`);
+}
+
+const launchChecklist = await readFile(join(docsRoot, "docs", "repo-launch-checklist.md"), "utf8");
+mustInclude(launchChecklist, "./live-aws-verification.md", "docs/repo-launch-checklist.md", "links live AWS runbook");
+
 if (failures.length > 0) {
   console.error(failures.join("\n"));
   process.exit(1);
